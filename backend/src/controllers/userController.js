@@ -3,26 +3,12 @@ const { User } = global.db;
 
 exports.getMasters = async (req, res) => {
   try {
-    const { city, spec } = req.query;
-    console.log("🔍 Поиск мастеров:", { city, spec });
+    const { city } = req.query;
+    console.log("🔍 Поиск мастеров, город:", city);
     
-    let where = { role: "master" };
-    
+    const where = { role: "master" };
     if (city && city.trim()) {
       where.city = { [Op.like]: `%${city.trim()}%` };
-    }
-    
-    // Если есть специализации — фильтруем ТОЛЬКО по ним
-    if (spec) {
-      const specs = Array.isArray(spec) ? spec : [spec];
-      
-      // Создаём условия для поиска
-      const conditions = specs.map(s => ({
-        specializations: { [Op.like]: `%"${s}"%` }
-      }));
-      
-      where[Op.or] = conditions;
-      console.log("Фильтр по специализациям:", specs);
     }
     
     const masters = await User.findAll({

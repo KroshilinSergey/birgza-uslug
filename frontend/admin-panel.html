@@ -68,7 +68,7 @@ async function loadCategories() {
       categoriesMap = {};
       data.data.forEach(c => categoriesMap[c.id] = c.name);
     }
-  } catch(e) {}
+  } catch(e) { console.error('Categories load error:', e); }
 }
 
 function formatSpecs(specs) {
@@ -78,12 +78,17 @@ function formatSpecs(specs) {
 
 async function loadStats() {
   token = localStorage.getItem('token');
-  if (!token) { window.location.href = 'admin-login.html'; return; }
+  if (!token) { 
+    window.location.href = 'admin-login.html'; 
+    return; 
+  }
   await loadCategories();
   try {
     const res = await fetch('/api/admin/users', { headers: { Authorization: 'Bearer ' + token } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if (!data.success) return;
+    if (!data.success) throw new Error(data.message);
+    
     const users = data.data;
     const cities = {};
     let totalMasters = 0, totalClients = 0;
@@ -96,72 +101,83 @@ async function loadStats() {
     document.getElementById('totalUsers').innerText = users.length;
     document.getElementById('totalMasters').innerText = totalMasters;
     document.getElementById('totalClients').innerText = totalClients;
+    
     const ordersRes = await fetch('/api/orders', { headers: { Authorization: 'Bearer ' + token } });
     const ordersData = await ordersRes.json();
     if (ordersData.success) document.getElementById('totalOrders').innerText = ordersData.data.length;
+    
     let idx = 1, html = '';
     for (const [city, counts] of Object.entries(cities)) {
       html += `<tr><td>${idx++}</td><td>${city}</td><td><button class="clickable-btn" onclick="showMasters('${city}')">👨‍🔧 ${counts.masters}</button></td><td><button class="clickable-btn" onclick="showClients('${city}')">👤 ${counts.clients}</button></td></tr>`;
     }
     document.getElementById('citiesList').innerHTML = html;
-  } catch(e) { console.error(e); }
+  } catch(e) { 
+    console.error('Load stats error:', e); 
+    document.getElementById('citiesList').innerHTML = '<tr><td colspan="4">Ошибка загрузки</td></tr>';
+  }
 }
 
 async function showMasters(city) {
-  const res = await fetch('/api/admin/users', { headers: { Authorization: 'Bearer ' + token } });
-  const data = await res.json();
-  const masters = data.data.filter(u => u.city === city && u.role === 'master');
-  let html = `<div class="sub-table"><h3>🔧 Мастера: ${city}</h3>
-    <table><thead><tr><th>#</th><th>Имя</th><th>Телефон</th><th>Специализации</th><th>Отработано</th><th>Действия</th></tr></thead><tbody>`;
-  masters.forEach((m, i) => {
-    html += `<tr data-user-id="${m.id}">
-      <td>${i+1}</td><td>${m.name}</td><td>${m.phone}</td>
-      <td>${formatSpecs(m.specializations)}</td>
-      <td>${m.reviewsCount || 0}</td>
-      <td><button class="action-btn" onclick="deleteUser(${m.id}, 'master', '${city}')">🗑 Удалить</button></td>
-    </tr>`;
-  });
-  html += '</tbody></table></div>';
-  document.getElementById('subTablesContainer').innerHTML = html;
+  try {
+    const res = await fetch('/api/admin/users', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    const masters = data.data.filter(u => u.city === city && u.role === 'master');
+    let html = `<div class="sub-table"><h3>🔧 Мастера: ${city}</h3>
+      <table><thead><tr><th>#</th><th>Имя</th><th>Телефон</th><th>Специализации</th><th>Отработано</th><th>Действия</th></tr></thead><tbody>`;
+    masters.forEach((m, i) => {
+      html += `<tr data-user-id="${m.id}">
+        <td>${i+1}</td><td>${m.name}</td><td>${m.phone}</td>
+        <td>${formatSpecs(m.specializations)}</td>
+        <td>${m.reviewsCount || 0}</td>
+        <td><button class="action-btn" onclick="deleteUser(${m.id}, 'master', '${city}')">🗑 Удалить</button></td>
+      </tr>`;
+    });
+    html += '</tbody></table></div>';
+    document.getElementById('subTablesContainer').innerHTML = html;
+  } catch(e) { console.error('Show masters error:', e); }
 }
 
 async function showClients(city) {
-  const res = await fetch('/api/admin/users', { headers: { Authorization: 'Bearer ' + token } });
-  const data = await res.json();
-  const clients = data.data.filter(u => u.city === city && u.role === 'client');
-  let html = `<div class="sub-table"><h3>👥 Заказчики: ${city}</h3>
-    <table><thead><tr><th>#</th><th>Имя</th><th>Телефон</th><th>Заказов</th><th>Активных</th><th>Действия</th></tr></thead><tbody>`;
-  for (let i = 0; i < clients.length; i++) {
-    const c = clients[i];
-    const ordRes = await fetch(`/api/admin/users/${c.id}/orders`, { headers: { Authorization: 'Bearer ' + token } });
-    const ordData = await ordRes.json();
-    const all = ordData.data || [];
-    const active = all.filter(o => o.status === 'new' || o.status === 'in_progress').length;
-    html += `<tr data-user-id="${c.id}">
-      <td>${i+1}</td><td>${c.name}</td><td>${c.phone}</td>
-      <td>${all.length}</td>
-      <td><button class="clickable-btn" onclick="showActiveOrders(${c.id}, '${c.name}')">📋 ${active}</button></td>
-      <td><button class="action-btn" onclick="deleteUser(${c.id}, 'client', '${city}')">🗑 Удалить</button></td>
-    </tr>`;
-  }
-  html += '</tbody></table></div>';
-  document.getElementById('subTablesContainer').innerHTML = html;
+  try {
+    const res = await fetch('/api/admin/users', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    const clients = data.data.filter(u => u.city === city && u.role === 'client');
+    let html = `<div class="sub-table"><h3>👥 Заказчики: ${city}</h3>
+      <table><thead><tr><th>#</th><th>Имя</th><th>Телефон</th><th>Заказов</th><th>Активных</th><th>Действия</th></tr></thead><tbody>`;
+    for (let i = 0; i < clients.length; i++) {
+      const c = clients[i];
+      const ordRes = await fetch(`/api/admin/users/${c.id}/orders`, { headers: { Authorization: 'Bearer ' + token } });
+      const ordData = await ordRes.json();
+      const all = ordData.data || [];
+      const active = all.filter(o => o.status === 'new' || o.status === 'in_progress').length;
+      html += `<tr data-user-id="${c.id}">
+        <td>${i+1}</td><td>${c.name}</td><td>${c.phone}</td>
+        <td>${all.length}</td>
+        <td><button class="clickable-btn" onclick="showActiveOrders(${c.id}, '${c.name}')">📋 ${active}</button></td>
+        <td><button class="action-btn" onclick="deleteUser(${c.id}, 'client', '${city}')">🗑 Удалить</button></td>
+      </tr>`;
+    }
+    html += '</tbody></table></div>';
+    document.getElementById('subTablesContainer').innerHTML = html;
+  } catch(e) { console.error('Show clients error:', e); }
 }
 
 async function showActiveOrders(userId, userName) {
-  const res = await fetch(`/api/admin/users/${userId}/orders`, { headers: { Authorization: 'Bearer ' + token } });
-  const data = await res.json();
-  const active = (data.data || []).filter(o => o.status === 'new' || o.status === 'in_progress');
-  const modalBody = document.getElementById('ordersModalBody');
-  if (!active.length) { modalBody.innerHTML = '<p>Нет активных заказов</p>'; }
-  else {
-    modalBody.innerHTML = `<h4>📦 Активные заказы: ${userName}</h4>` + active.map(o =>
-      `<div style="background:#f8f9ff;border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px;">
-        <strong>${o.title}</strong><br>${o.description}<br>Статус: ${o.status === 'new' ? '🟡 Ожидает' : '🟢 В работе'}
-      </div>`
-    ).join('');
-  }
-  document.getElementById('ordersModal').style.display = 'flex';
+  try {
+    const res = await fetch(`/api/admin/users/${userId}/orders`, { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    const active = (data.data || []).filter(o => o.status === 'new' || o.status === 'in_progress');
+    const modalBody = document.getElementById('ordersModalBody');
+    if (!active.length) { modalBody.innerHTML = '<p>Нет активных заказов</p>'; }
+    else {
+      modalBody.innerHTML = `<h4>📦 Активные заказы: ${userName}</h4>` + active.map(o =>
+        `<div style="background:#f8f9ff;border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px;">
+          <strong>${o.title}</strong><br>${o.description}<br>Статус: ${o.status === 'new' ? '🟡 Ожидает' : '🟢 В работе'}
+        </div>`
+      ).join('');
+    }
+    document.getElementById('ordersModal').style.display = 'flex';
+  } catch(e) { console.error('Show orders error:', e); }
 }
 
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }

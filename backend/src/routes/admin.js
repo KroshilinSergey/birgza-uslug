@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { protect, authorize } = require("../middleware/auth");
-const { User } = global.db;
 
 // Все маршруты требуют авторизации и роли admin
 router.use(protect, authorize("admin"));
@@ -9,12 +8,14 @@ router.use(protect, authorize("admin"));
 // Получить всех пользователей
 router.get("/users", async (req, res) => {
   try {
+    const { User } = global.db;
     const users = await User.findAll({
       attributes: { exclude: ["password"] },
       order: [["createdAt", "DESC"]],
     });
     res.json({ success: true, data: users });
   } catch (error) {
+    console.error("Admin users error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -22,6 +23,7 @@ router.get("/users", async (req, res) => {
 // Удалить пользователя
 router.delete("/users/:id", async (req, res) => {
   try {
+    const { User } = global.db;
     const user = await User.findByPk(req.params.id);
     if (!user) {
       return res.status(404).json({ success: false, message: "Пользователь не найден" });
@@ -32,13 +34,15 @@ router.delete("/users/:id", async (req, res) => {
     await user.destroy();
     res.json({ success: true, message: "Пользователь удалён" });
   } catch (error) {
+    console.error("Admin delete error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// Заблокировать/разблокировать пользователя
+// Блокировка пользователя
 router.put("/users/:id/block", async (req, res) => {
   try {
+    const { User } = global.db;
     const { isBlocked } = req.body;
     const user = await User.findByPk(req.params.id);
     if (!user) {
@@ -54,11 +58,12 @@ router.put("/users/:id/block", async (req, res) => {
       message: isBlocked ? "Пользователь заблокирован" : "Пользователь разблокирован",
     });
   } catch (error) {
+    console.error("Admin block error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// Получить заказы пользователя
+// Заказы пользователя
 router.get("/users/:id/orders", async (req, res) => {
   try {
     const { Order } = global.db;
@@ -68,11 +73,12 @@ router.get("/users/:id/orders", async (req, res) => {
     });
     res.json({ success: true, data: orders });
   } catch (error) {
+    console.error("Admin orders error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// Получить категории
+// Категории
 router.get("/categories", async (req, res) => {
   try {
     const { Category } = global.db;
@@ -82,6 +88,7 @@ router.get("/categories", async (req, res) => {
     });
     res.json({ success: true, data: categories });
   } catch (error) {
+    console.error("Admin categories error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
