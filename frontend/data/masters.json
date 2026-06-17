@@ -1,0 +1,38 @@
+{
+  "masters": [
+    {
+      "id": 1,
+      "name": "Иван Петров",
+      "photo": "img/masters/1.jpg",
+      "rating": 4.9,
+      "reviews": 42,
+      "category": "Ремонт полов",
+      "specializations": ["Ламинат", "Паркет", "Линолеум"],
+      "experience": 12,
+      "pricePerMeter": 1500,
+      "minPrice": 3000,
+      "description": "Специалист по укладке ламината и паркета. Опыт 12 лет. Использую только качественные материалы. Гарантия на работу 2 года.",
+      "phone": "+7 (900) 123-45-67",
+      "email": "ivan@example.com",
+      "isVerified": true,
+      "registrationDate": "2023-01-15"
+    },
+    {
+      "id": 2,
+      "name": "Алексей Смирнов",
+      "photo": "img/masters/2.jpg",
+      "rating": 4.7,
+      "reviews": 28,
+      "category": "Сантехника",
+      "specializations": ["Установка сантехники", "Ремонт труб", "Замена смесителей"],
+      "experience": 15,
+      "pricePerHour": 1200,
+      "minPrice": 2500,
+      "description": "Установка и ремонт сантехники. Работаю с 2008 года. Имею все необходимые сертификаты и допуски.",
+      "phone": "+7 (900) 234-56-78",
+      "email": "alexey@example.com",
+      "isVerified": true,
+      "registrationDate": "2023-02-20"
+    }
+  ]
+}

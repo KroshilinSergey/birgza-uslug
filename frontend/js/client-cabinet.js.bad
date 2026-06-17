@@ -1,0 +1,130 @@
+// client-cabinet.js - финальная версия с правильными специализациями
+
+let specializationsMap = {};
+
+async function loadSpecializationsMap() {
+  try {
+    const response = await fetch("/api/categories");
+    const result = await response.json();
+    if (result.success) {
+      specializationsMap = {};
+      result.data.forEach(cat => {
+        specializationsMap[cat.id] = cat.name;
+        specializationsMap[String(cat.id)] = cat.name;
+      });
+      console.log("✅ Загружено категорий:", Object.keys(specializationsMap).length);
+    }
+  } catch(e) {
+    console.error("Ошибка загрузки категорий:", e);
+  }
+}
+
+function formatSpecializations(specs) {
+  if (!specs || !specs.length) return "—";
+  return specs.map(s => specializationsMap[s] || specializationsMap[String(s)] || s).join(", ");
+}
+
+window.searchMasters = async function() {
+  const city = document.getElementById("searchCity")?.value.trim() || "";
+  if (!city) { alert("Введите город"); return; }
+  
+  const token = localStorage.getItem("token");
+  if (!token) { alert("Сессия истекла"); window.location.href = "login.html"; return; }
+  
+  // Загружаем карту специализаций
+  await loadSpecializationsMap();
+  
+  try {
+    const response = await fetch(`/api/users/masters?city=${encodeURIComponent(city)}`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const result = await response.json();
+    
+    if (result.success) {
+      const masters = result.data || [];
+      const container = document.getElementById("mastersList");
+      const countSpan = document.getElementById("mastersCount");
+      if (countSpan) countSpan.textContent = `(${masters.length})`;
+      
+      if (masters.length === 0) {
+        container.innerHTML = '<div class="empty-state">Мастеров не найдено</div>';
+      } else {
+        let html = '';
+        masters.forEach(master => {
+          html += `
+            <div style="display:flex; gap:15px; padding:15px; border:1px solid #ddd; border-radius:10px; margin-bottom:15px;">
+              <div style="width:60px; height:60px; background:#4299e1; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:24px;">${(master.name || "М").charAt(0).toUpperCase()}</div>
+              <div>
+                <h3>${escapeHtml(master.name)}</h3>
+                <div>⭐ ${master.rating || 0} (${master.reviewsCount || 0} отзывов)</div>
+                <div>Город: ${escapeHtml(master.city || "Не указан")}</div>
+                <div>Специализации: ${formatSpecializations(master.specializations)}</div>
+                <button class="chat-master-btn" data-id="${master.id}" data-name="${escapeHtml(master.name)}" style="margin-top:10px; padding:8px 20px; background:#4299e1; color:white; border:none; border-radius:5px; cursor:pointer;">Написать мастеру</button>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+        
+        document.querySelectorAll(".chat-master-btn").forEach(btn => {
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute("data-id");
+            const name = btn.getAttribute("data-name");
+            if (typeof window.openChatWithMasterDirect === "function") {
+              window.openChatWithMasterDirect(id, name);
+            } else {
+              alert("Функция чата загружается");
+            }
+          };
+        });
+      }
+      document.getElementById("searchResults").style.display = "block";
+    } else {
+      alert("Ошибка: " + result.message);
+    }
+  } catch(e) {
+    console.error(e);
+    alert("Ошибка поиска: " + e.message);
+  }
+};
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === "&") return "&amp;";
+    if (m === "<") return "&lt;";
+    if (m === ">") return "&gt;";
+    return m;
+  });
+}
+
+// Привязка кнопок
+document.addEventListener("DOMContentLoaded", function() {
+  const findMasterBtn = document.getElementById("findMasterBtn");
+  if (findMasterBtn) {
+    findMasterBtn.onclick = (e) => {
+      e.preventDefault();
+      document.getElementById("findMasterModal").style.display = "flex";
+    };
+  }
+  
+  const searchBtn = document.getElementById("searchMastersBtn");
+  if (searchBtn) {
+    searchBtn.onclick = (e) => {
+      e.preventDefault();
+      window.searchMasters();
+    };
+  }
+  
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.onclick = (e) => {
+      e.preventDefault();
+      localStorage.clear();
+      window.location.href = "index.html";
+    };
+  }
+});
+
+console.log("✅ client-cabinet.js загружен");

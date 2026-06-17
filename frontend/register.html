@@ -1,0 +1,437 @@
+<!-- register.html - финальная версия с отдельным блоком +7 и необязательным email -->
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Регистрация | Биржа услуг</title>
+		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="css/components.css">
+		<link rel="stylesheet" href="css/pages.css">
+		<link rel="icon" href="img/logo.png">
+		<style>
+        .phone-wrapper {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fafbfc;
+            transition: border-color 0.2s ease;
+            overflow: hidden;
+        }
+        .phone-wrapper:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .phone-prefix {
+            font-weight: 700;
+            padding: 10px 16px;
+            background: #f3f4f6;
+            border-right: 2px solid #e2e8f0;
+            color: #1e293b;
+            font-size: 16px;
+            line-height: 1.5;
+            white-space: nowrap;
+        }
+        .phone-input {
+            border: none !important;
+            border-radius: 0 !important;
+            flex: 1;
+            background: transparent !important;
+            padding: 10px 16px;
+        }
+        .phone-input:focus {
+            outline: none;
+            box-shadow: none !important;
+        }
+        .specializations-container {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .specializations-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .specialization-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .specialization-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        .specialization-checkbox label {
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            user-select: none;
+        }
+        @media (max-width: 768px) {
+            .specializations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+		<script src="js/redirect.js"></script>
+	</head>
+	<body>
+		<header class="header">
+			<div class="container">
+				<div class="header-inner">
+					<a href="index.html" class="logo">
+						<img src="img/logo.png" alt="Биржа услуг">
+						<span>Биржа услуг</span>
+					</a>
+					<nav class="nav">
+						<a href="index.html">Главная</a>
+						<a href="login.html" class="btn btn-outline">Войти</a>
+					</nav>
+					<button class="mobile-menu-btn" id="mobileMenuBtn">
+						<span></span>
+						<span></span>
+						<span></span>
+					</button>
+				</div>
+			</div>
+		</header>
+
+		<main class="main-content">
+			<div class="container">
+				<div class="check-in-container">
+					<h2 class="check-in-title">Регистрация</h2>
+					<p class="check-in-subtitle">Выберите тип аккаунта</p>
+
+					<div class="role-selection" id="roleSelection">
+						<div class="role-option" data-role="master">
+							<div class="role-icon">👨‍🔧</div>
+							<h3 class="role-title">Мастер</h3>
+							<p class="role-description">Предоставляю услуги по ремонту и
+								строительству</p>
+							<div class="role-features">
+								<span>✓ Получайте заказы</span>
+								<span>✓ Создайте портфолио</span>
+								<span>✓ Работайте с клиентами</span>
+							</div>
+							<button type="button" class="role-btn master-btn" id="masterBtn">Стать
+								мастером</button>
+						</div>
+						<div class="role-option" data-role="client">
+							<div class="role-icon">👨‍💼</div>
+							<h3 class="role-title">Заказчик</h3>
+							<p class="role-description">Ищу проверенных мастеров для выполнения
+								работ</p>
+							<div class="role-features">
+								<span>✓ Размещайте заказы</span>
+								<span>✓ Выбирайте из проверенных</span>
+								<span>✓ Гарантия качества</span>
+							</div>
+							<button type="button" class="role-btn client-btn" id="clientBtn">Стать
+								заказчиком</button>
+						</div>
+					</div>
+
+					<form class="check-in-form" id="registrationForm" style="display: none;">
+						<div class="selected-role-info" id="selectedRoleInfo">
+							<span class="role-badge" id="roleBadge"></span>
+							<button type="button" class="change-role-btn"
+								id="changeRoleBtn">Изменить</button>
+						</div>
+
+						<input type="hidden" id="userRole" name="role" value>
+
+						<div class="form-progress">
+							<div class="progress-bar">
+								<div class="progress-fill" id="progressFill" style="width: 0%"></div>
+							</div>
+							<div class="progress-text" id="progressText">Заполнено: 0%</div>
+						</div>
+
+						<div class="form-group">
+							<label for="city" class="required">Ваш город</label>
+							<input type="text" id="city" name="city" class="form-input"
+								placeholder="Начните вводить название города..." data-city-autocomplete
+								required>
+							<input type="hidden" id="cityData" name="cityData">
+							<small class="form-text text-muted">Начните вводить название города,
+								выберите из списка</small>
+						</div>
+
+						<div class="form-group">
+							<label for="name" class="required">Имя и фамилия</label>
+							<input type="text" id="name" class="form-input" placeholder="Иван Иванов"
+								required>
+							<div class="error-message" id="nameError"></div>
+						</div>
+
+						<!-- Телефон с отдельным блоком +7 -->
+						<div class="form-group">
+							<label for="phone" class="required">Телефон</label>
+							<div class="phone-wrapper">
+								<span class="phone-prefix">+7</span>
+								<input type="tel" id="phone" class="form-input phone-input"
+									placeholder="900 123 45 67" required>
+							</div>
+							<div class="error-message" id="phoneError"></div>
+							<small class="form-text text-muted">Введите последние 10 цифр</small>
+						</div>
+
+						<div class="form-group">
+							<label for="email">Email (необязательно, но поможет восстановить забытый
+								пароль)</label>
+							<input type="email" id="email" class="form-input"
+								placeholder="example@mail.ru" autocomplete="off">
+							<div class="error-message" id="emailError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="password" class="required">Пароль</label>
+							<div style="position: relative;">
+								<input type="password" id="password" class="form-input"
+									placeholder="Не менее 8 символов" required>
+								<button type="button" class="toggle-password" data-target="password"
+									style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">👁</button>
+							</div>
+							<div class="error-message" id="passwordError"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="confirmPassword" class="required">Подтверждение
+								пароля</label>
+							<div style="position: relative;">
+								<input type="password" id="confirmPassword" class="form-input"
+									placeholder="Повторите пароль" required>
+								<button type="button" class="toggle-password"
+									data-target="confirmPassword"
+									style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">👁</button>
+							</div>
+							<div class="error-message" id="confirmPasswordError"></div>
+						</div>
+
+						<div id="masterFields" style="display: none;">
+							<div class="form-group">
+								<label for="experience" class="required">Опыт работы (лет)</label>
+								<input type="number" id="experience" class="form-input" min="0" max="50"
+									placeholder="0" required>
+							</div>
+
+							<div class="form-group">
+								<label class="required">Специализация (выберите виды работ)</label>
+								<div class="specializations-container">
+									<div class="specializations-grid" id="specializationsGrid">
+										<!-- Чекбоксы будут добавлены через JavaScript -->
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="checkbox-group">
+							<input type="checkbox" id="agreeTerms" required>
+							<label for="agreeTerms">
+								Я согласен с <a href="#"
+									onclick="openPrivacyModal('terms'); return false;">условиями
+									использования</a>
+								и <a href="#"
+									onclick="openPrivacyModal('privacy'); return false;">политикой
+									конфиденциальности</a>
+							</label>
+						</div>
+
+						<div class="form-actions">
+							<button type="submit" class="btn-submit"
+								id="submitBtn">Зарегистрироваться</button>
+							<button type="button" class="btn-reset" id="clearBtn">Очистить
+								форму</button>
+						</div>
+					</form>
+
+					<div class="check-in-links" id="loginLink" style="display: none;">
+						Уже есть аккаунт? <a href="login.html">Войти</a>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<footer class="footer">
+			<div class="container">
+				<div class="footer-inner">
+					<div class="footer-col">
+						<div class="logo">
+							<img src="img/logo.png" alt="Биржа услуг">
+							<span>Биржа услуг</span>
+						</div>
+						<p class="footer-about">Агрегатор проверенных мастеров.
+							Гарантия качества и лучшие цены.</p>
+					</div>
+					<!-- <div class="footer-col">
+						<h3 class="footer-title">Меню</h3>
+						<ul class="footer-links">
+							<li><a href="index.html">Главная</a></li>
+							<li><a href="pages/masters.html">Мастера</a></li>
+							<li><a href="pages/post-order.html">Разместить заказ</a></li>
+							<li><a href="pages/become-master.html">Стать мастером</a></li>
+							<li><a href="pages/reviews.html">Отзывы</a></li>
+						</ul>
+					</div> -->
+					<div class="footer-col">
+						<h3 class="footer-title">Контакты</h3>
+						<ul class="footer-contacts">
+							<li><a href="tel:+78001234567">8 (900) 177-27-18</a></li>
+							<li><a href="rabota350882@gmail.com">rabota350882@gmail.com</a></li>
+							<li>Работаем: 9:00 - 21:00</li>
+						</ul>
+					</div>
+
+				</div>
+				<div class="footer-bottom">
+					<p>&copy; 2026 Биржа услуг. Все права защищены.</p>
+					<p><a href="#">Политика конфиденциальности</a> | <a
+							href="#">Пользовательское соглашение</a></p>
+				</div>
+			</div>
+		</footer>
+
+		<script src="js/utils.js"></script>
+		<script src="data/russian-cities.js"></script>
+<script src="data/standard-cities.js?v=4"></script>
+		<script src="js/city-autocomplete.js"></script>
+		<script src="js/register.js?v=45"></script>
+		<script src="js/city-manager.js"></script>
+
+		<!-- Модальное окно с политикой конфиденциальности -->
+		<div id="privacyModal" class="privacy-modal">
+			<div class="privacy-modal-content">
+				<div class="privacy-modal-header">
+					<h2><i class="fas fa-shield-alt"></i> Политика конфиденциальности</h2>
+					<button class="privacy-modal-close"
+						onclick="closePrivacyModal()">&times;</button>
+				</div>
+				<div class="privacy-modal-body">
+					<div class="privacy-tabs">
+						<button class="privacy-tab active" data-tab="privacy">Политика
+							конфиденциальности</button>
+						<button class="privacy-tab" data-tab="terms">Пользовательское
+							соглашение</button>
+					</div>
+
+					<div class="privacy-content active" id="privacyContent">
+						<h3>1. Общие положения</h3>
+						<p>1.1. Настоящая Политика конфиденциальности (далее — Политика)
+							определяет порядок обработки и защиты персональных данных пользователей
+							сервиса «РемонтЭксперт» (далее — Сервис).</p>
+						<p>1.2. Используя Сервис, пользователь выражает свое согласие с условиями
+							настоящей Политики и предоставляет согласие на обработку своих
+							персональных данных.</p>
+
+						<h3>2. Какие данные собираются</h3>
+						<p>2.1. При регистрации мы собираем следующие данные:</p>
+						<ul>
+							<li>Имя и фамилия</li>
+							<li>Номер телефона</li>
+							<li>Адрес электронной почты (при наличии)</li>
+							<li>Город проживания</li>
+							<li>Для мастеров: специализация и опыт работы</li>
+						</ul>
+
+						<h3>3. Как используются данные</h3>
+						<p>3.1. Персональные данные используются для:</p>
+						<ul>
+							<li>Создания и управления учетной записью</li>
+							<li>Предоставления доступа к функционалу сервиса</li>
+							<li>Связи с пользователем (уведомления о заказах, сообщения)</li>
+							<li>Улучшения качества сервиса</li>
+						</ul>
+
+						<h3>4. Защита данных</h3>
+						<p>4.1. Мы принимаем все необходимые меры для защиты персональных данных
+							от несанкционированного доступа, изменения, раскрытия или
+							уничтожения.</p>
+						<p>4.2. Передача персональных данных третьим лицам осуществляется только с
+							согласия пользователя или в случаях, предусмотренных
+							законодательством.</p>
+
+						<h3>5. Срок хранения данных</h3>
+						<p>5.1. Персональные данные хранятся до момента удаления учетной записи
+							пользователем или по требованию пользователя.</p>
+
+						<h3>6. Изменение политики</h3>
+						<p>6.1. Мы оставляем за собой право вносить изменения в настоящую
+							Политику. Новая версия Политики вступает в силу с момента ее
+							опубликования.</p>
+
+						<h3>7. Контактная информация</h3>
+						<p>7.1. По всем вопросам, связанным с обработкой персональных данных,
+							можно обращаться по адресу: <a
+								href="mailto:privacy@remont-expert.ru">privacy@remont-expert.ru</a></p>
+
+						<p class="privacy-date">Последнее обновление: 23 февраля 2026 г.</p>
+					</div>
+
+					<div class="privacy-content" id="termsContent">
+						<h3>1. Термины и определения</h3>
+						<p>1.1. Сервис — интернет-платформа «РемонтЭксперт», предназначенная для
+							поиска мастеров и размещения заказов на ремонтные работы.</p>
+						<p>1.2. Пользователь — физическое лицо, прошедшее регистрацию на Сервисе и
+							использующее его функционал.</p>
+						<p>1.3. Заказчик — пользователь, размещающий заказ на выполнение
+							работ.</p>
+						<p>1.4. Мастер — пользователь, предлагающий свои услуги по выполнению
+							работ.</p>
+
+						<h3>2. Предмет соглашения</h3>
+						<p>2.1. Сервис предоставляет возможность Заказчикам размещать заказы, а
+							Мастерам — откликаться на них.</p>
+						<p>2.2. Сервис является лишь посредником и не несет ответственности за
+							качество выполнения работ.</p>
+
+						<h3>3. Права и обязанности сторон</h3>
+						<p>3.1. Пользователь обязуется:</p>
+						<ul>
+							<li>Предоставлять достоверную информацию при регистрации</li>
+							<li>Не использовать Сервис для размещения противоправной информации</li>
+							<li>Соблюдать права других пользователей</li>
+						</ul>
+						<p>3.2. Сервис обязуется:</p>
+						<ul>
+							<li>Обеспечивать работу Сервиса в соответствии с его функционалом</li>
+							<li>Принимать меры для защиты персональных данных</li>
+							<li>Своевременно уведомлять пользователей об изменениях в работе
+								Сервиса</li>
+						</ul>
+
+						<h3>4. Ответственность</h3>
+						<p>4.1. Сервис не несет ответственности за:</p>
+						<ul>
+							<li>Качество работ, выполненных Мастерами</li>
+							<li>Соблюдение сроков выполнения работ</li>
+							<li>Финансовые расчеты между Заказчиком и Мастером</li>
+						</ul>
+						<p>4.2. Пользователь несет ответственность за достоверность
+							предоставленной информации.</p>
+
+						<h3>5. Порядок разрешения споров</h3>
+						<p>5.1. Все споры решаются путем переговоров. При недостижении согласия
+							споры подлежат рассмотрению в суде по месту нахождения Сервиса.</p>
+
+						<h3>6. Заключительные положения</h3>
+						<p>6.1. Настоящее соглашение вступает в силу с момента регистрации
+							пользователя.</p>
+						<p>6.2. Сервис оставляет за собой право блокировать учетные записи
+							пользователей, нарушающих условия соглашения.</p>
+
+						<p class="privacy-date">Последнее обновление: 23 февраля 2026 г.</p>
+					</div>
+				</div>
+				<div class="privacy-modal-footer">
+					<button class="btn-privacy-close"
+						onclick="closePrivacyModal()">Закрыть</button>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,439 @@
+// register.js – финальная версия с поддержкой параметра role из URL
+document.addEventListener("DOMContentLoaded", function () {
+  let categoriesLoaded = false;
+  let loadTimeout = null;
+
+  const masterBtn = document.getElementById("masterBtn");
+  const clientBtn = document.getElementById("clientBtn");
+  const roleSelection = document.getElementById("roleSelection");
+  const registrationForm = document.getElementById("registrationForm");
+  const selectedRoleInfo = document.getElementById("selectedRoleInfo");
+  const roleBadge = document.getElementById("roleBadge");
+  const userRole = document.getElementById("userRole");
+  const changeRoleBtn = document.getElementById("changeRoleBtn");
+  const loginLink = document.getElementById("loginLink");
+  const masterFields = document.getElementById("masterFields");
+  const phoneInput = document.getElementById("phone");
+  const submitBtn = document.getElementById("submitBtn");
+
+  // --- Автоматический выбор роли из URL (если есть параметр role) ---
+  const urlParams = new URLSearchParams(window.location.search);
+  const roleParam = urlParams.get("role");
+  if (roleParam === "client" || roleParam === "master") {
+    showForm(roleParam);
+  }
+
+  if (submitBtn) submitBtn.disabled = true;
+
+  // Форматирование телефона
+  if (phoneInput) {
+    phoneInput.addEventListener("input", function (e) {
+      let raw = e.target.value;
+      let digits = raw.replace(/\D/g, "").slice(0, 10);
+      let formatted = "";
+      if (digits.length > 0) {
+        if (digits.length <= 3) formatted = digits;
+        else if (digits.length <= 6)
+          formatted = digits.slice(0, 3) + " " + digits.slice(3);
+        else if (digits.length <= 8)
+          formatted =
+            digits.slice(0, 3) +
+            " " +
+            digits.slice(3, 6) +
+            " " +
+            digits.slice(6);
+        else
+          formatted =
+            digits.slice(0, 3) +
+            " " +
+            digits.slice(3, 6) +
+            " " +
+            digits.slice(6, 8) +
+            " " +
+            digits.slice(8, 10);
+      }
+      e.target.value = formatted;
+    });
+  }
+
+  async function loadSpecializations() {
+    const container = document.getElementById("specializationsGrid");
+    if (!container) return;
+    try {
+
+      const result = await response.json();
+      if (result.success && result.data.length > 0) {
+        const categories = result.data;
+
+        // Группировка
+        const rootItems = [];
+        const childrenByParent = {};
+        categories.forEach((cat) => {
+          if (!cat.parentCategory) {
+            rootItems.push(cat);
+          } else {
+            const parentId = cat.parentCategory._id || cat.parentCategory;
+            if (!childrenByParent[parentId]) childrenByParent[parentId] = [];
+            childrenByParent[parentId].push(cat);
+          }
+        });
+
+        container.innerHTML = "";
+
+        // Корневые (кроме «Ремонт и строительство»)
+        rootItems.forEach((cat) => {
+          if (cat.name === "Ремонт и строительство") return;
+          const div = document.createElement("div");
+          div.className = "specialization-checkbox";
+          div.innerHTML = `
+          <input type="checkbox" name="specializations" value="${cat._id}" id="spec_${cat._id}">
+          <label for="spec_${cat._id}">${cat.name}</label>
+        `;
+          container.appendChild(div);
+        });
+
+        // Группа «Ремонт и строительство»
+        const parentCat = rootItems.find(
+          (c) => c.name === "Ремонт и строительство",
+        );
+        if (parentCat && childrenByParent[parentCat._id]) {
+          const groupDiv = document.createElement("div");
+          groupDiv.className = "category-group";
+
+          const header = document.createElement("div");
+          header.className = "category-group-header";
+          header.innerHTML = `<span>Ремонт и строительство</span><i class="fas fa-chevron-right"></i>`;
+
+          const content = document.createElement("div");
+          content.className = "category-group-content";
+
+          childrenByParent[parentCat._id].forEach((child) => {
+            const div = document.createElement("div");
+            div.className = "specialization-checkbox";
+            div.innerHTML = `
+            <input type="checkbox" name="specializations" value="${child._id}" id="spec_${child._id}">
+            <label for="spec_${child._id}">${child.name}</label>
+          `;
+            content.appendChild(div);
+          });
+
+          header.addEventListener("click", () => {
+            const isOpening = !content.classList.contains("open");
+            header.classList.toggle("open");
+            content.classList.toggle("open");
+            if (isOpening) {
+              setTimeout(() => {
+                content.scrollIntoView({ behavior: "smooth", block: "start" });
+              }, 100);
+            }
+          });
+
+          groupDiv.appendChild(header);
+          groupDiv.appendChild(content);
+          container.appendChild(groupDiv);
+        }
+
+        categoriesLoaded = true;
+      } else {
+        // fallback
+        container.innerHTML = getFallbackSpecializationsHTML();
+        categoriesLoaded = true;
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки категорий:", error);
+      container.innerHTML = getFallbackSpecializationsHTML();
+      categoriesLoaded = true;
+    } finally {
+      if (loadTimeout) clearTimeout(loadTimeout);
+      if (userRole.value === "master") {
+        submitBtn.disabled = false;
+      }
+    }
+  }
+
+  function getFallbackSpecializationsHTML() {
+    const fallbackList = [
+      "Грузоперевозки",
+      "Курьерские услуги",
+      "Уборка и помощь по хозяйству",
+      "Компьютерная помощь",
+      "Фото и видео услуги",
+      "Установка и ремонт бытовой техники",
+      "Ремонт цифровой техники",
+      "Репетиторские услуги",
+      "Ремонт транспорта",
+      "Сантехнические работы",
+      "Электромонтажные работы",
+      "Плиточные работы",
+      "Отделочные работы",
+      "Потолочные работы",
+      "Обустройство пола",
+      "Установка и ремонт дверей",
+      "Окна, остекление и отделка балконов",
+      "Кровельные и фасадные работы",
+      "Демонтажные работы",
+      "Ремонт квартир под ключ",
+      "Строительные работы",
+    ];
+    return fallbackList
+      .map((name) => {
+        const id = "spec_fallback_" + name.replace(/\s+/g, "");
+        return `
+      <div class="specialization-checkbox">
+        <input type="checkbox" name="specializations" value="${name}" id="${id}">
+        <label for="${id}">${name}</label>
+      </div>
+    `;
+      })
+      .join("");
+  }
+
+  function showForm(role) {
+    roleSelection.style.display = "none";
+    registrationForm.style.display = "block";
+    selectedRoleInfo.style.display = "flex";
+    loginLink.style.display = "block";
+    userRole.value = role;
+    roleBadge.textContent = role === "master" ? "Мастер" : "Заказчик";
+
+    // Очищаем поле email от автозаполнения
+    const emailInput = document.getElementById("email");
+    if (emailInput) emailInput.value = "";
+
+    if (role === "master") {
+      masterFields.style.display = "block";
+      document.getElementById("experience").required = true;
+      submitBtn.disabled = true;
+      categoriesLoaded = false;
+      loadTimeout = setTimeout(() => {
+        if (!categoriesLoaded) {
+          console.warn("Таймаут загрузки специализаций, разблокируем кнопку");
+          categoriesLoaded = true;
+          submitBtn.disabled = false;
+        }
+      }, 5000);
+      loadSpecializations();
+    } else {
+      masterFields.style.display = "none";
+      document.getElementById("experience").required = false;
+      submitBtn.disabled = false;
+    }
+
+    updateProgress();
+    attachFormHandler();
+  }
+
+  if (masterBtn) masterBtn.addEventListener("click", () => showForm("master"));
+  if (clientBtn) clientBtn.addEventListener("click", () => showForm("client"));
+
+  if (changeRoleBtn) {
+    changeRoleBtn.addEventListener("click", function () {
+      roleSelection.style.display = "flex";
+      registrationForm.style.display = "none";
+      selectedRoleInfo.style.display = "none";
+      loginLink.style.display = "none";
+      if (loadTimeout) clearTimeout(loadTimeout);
+    });
+  }
+
+  function attachFormHandler() {
+    if (
+      registrationForm &&
+      !registrationForm.hasAttribute("data-handler-attached")
+    ) {
+      registrationForm.setAttribute("data-handler-attached", "true");
+      registrationForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const phoneRaw = document.getElementById("phone").value.trim();
+        const digits = phoneRaw.replace(/\D/g, "");
+        if (digits.length < 10) {
+          alert("Введите корректный номер телефона (10 цифр после +7)");
+          return;
+        }
+        const phone = "+7" + digits.slice(0, 10);
+        const email =
+          document.getElementById("email").value.trim() || undefined;
+        const password = document.getElementById("password").value;
+        const city = document.getElementById("city").value.trim();
+        const role = document.getElementById("userRole").value;
+
+        if (!name || !phone || !password || !city) {
+          alert("Заполните все обязательные поля");
+          return;
+        }
+
+        let experience = 0;
+        let specializations = [];
+        if (role === "master") {
+          experience =
+            parseInt(document.getElementById("experience").value) || 0;
+          document
+            .querySelectorAll('input[name="specializations"]:checked')
+            .forEach((cb) => {
+              specializations.push(cb.value);
+            });
+          console.log("Выбранные специализации:", specializations);
+          if (specializations.length === 0) {
+            const proceed = confirm(
+              "Вы не выбрали ни одной специализации. Продолжить регистрацию? (Вы сможете добавить их позже в анкете)",
+            );
+            if (!proceed) return;
+          }
+        }
+
+        if (role === "master" && !categoriesLoaded) {
+          alert(
+            "Список специализаций ещё загружается. Пожалуйста, подождите несколько секунд и попробуйте снова.",
+          );
+          return;
+        }
+
+        const requestBody = {
+          name,
+          email,
+          phone,
+          password,
+          role,
+          city,
+          experience,
+          specializations,
+        };
+        console.log("Отправка данных на сервер:", requestBody);
+
+        try {
+          const response = await fetch(
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(requestBody),
+            },
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            localStorage.setItem("remont_token", data.token);
+            localStorage.setItem("remont_user", JSON.stringify(data.user));
+            window.location.href =
+              role === "master" ? "master-cabinet.html" : "client-cabinet.html";
+          } else {
+            alert("Ошибка: " + (data.message || "Неизвестная ошибка"));
+            console.error("Ошибка сервера:", data);
+          }
+        } catch (error) {
+          console.error("Ошибка регистрации:", error);
+          alert("Не удалось соединиться с сервером");
+        }
+      });
+      console.log("Обработчик формы назначен");
+    }
+  }
+
+  function updateProgress() {
+    const inputs = registrationForm.querySelectorAll("input, select, textarea");
+    let filled = 0;
+    inputs.forEach((input) => {
+      if (input.value.trim() !== "") filled++;
+    });
+    const percent = Math.round((filled / inputs.length) * 100);
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+    if (progressFill) progressFill.style.width = percent + "%";
+    if (progressText) progressText.textContent = "Заполнено: " + percent + "%";
+  }
+
+  if (registrationForm) {
+    registrationForm.addEventListener("input", updateProgress);
+  }
+
+  if (registrationForm && registrationForm.style.display !== "none") {
+    attachFormHandler();
+  }
+});
+
+// Функции для работы с модальным окном политики конфиденциальности
+function openPrivacyModal(tab = "privacy") {
+  const modal = document.getElementById("privacyModal");
+  if (!modal) return;
+
+  const tabs = document.querySelectorAll(".privacy-tab");
+  const contents = document.querySelectorAll(".privacy-content");
+
+  tabs.forEach((t) => t.classList.remove("active"));
+  contents.forEach((c) => c.classList.remove("active"));
+
+  const activeTab = document.querySelector(`.privacy-tab[data-tab="${tab}"]`);
+  const activeContent = document.getElementById(
+    tab === "privacy" ? "privacyContent" : "termsContent",
+  );
+
+  if (activeTab) activeTab.classList.add("active");
+  if (activeContent) activeContent.classList.add("active");
+
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+function closePrivacyModal() {
+  const modal = document.getElementById("privacyModal");
+  if (modal) {
+    modal.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Обработчики для ссылок на политику
+  const privacyLinks = document.querySelectorAll(
+    'a[href="#"], a[href*="политикой"], a[href*="условиями"]',
+  );
+  privacyLinks.forEach((link) => {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      const text = this.textContent.toLowerCase();
+      if (text.includes("политик") || text.includes("конфиденц")) {
+        openPrivacyModal("privacy");
+      } else if (text.includes("услови") || text.includes("пользователь")) {
+        openPrivacyModal("terms");
+      } else {
+        openPrivacyModal("privacy");
+      }
+    });
+  });
+
+  // Вкладки внутри модалки
+  const tabs = document.querySelectorAll(".privacy-tab");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      const tabId = this.dataset.tab;
+      document
+        .querySelectorAll(".privacy-tab")
+        .forEach((t) => t.classList.remove("active"));
+      document
+        .querySelectorAll(".privacy-content")
+        .forEach((c) => c.classList.remove("active"));
+      this.classList.add("active");
+      document
+        .getElementById(tabId === "privacy" ? "privacyContent" : "termsContent")
+        .classList.add("active");
+    });
+  });
+
+  // Закрытие по клику вне модалки
+  window.addEventListener("click", function (e) {
+    const modal = document.getElementById("privacyModal");
+    if (e.target === modal) {
+      closePrivacyModal();
+    }
+  });
+
+  // Закрытие по Escape
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      closePrivacyModal();
+    }
+  });
+});
+
+...}
+

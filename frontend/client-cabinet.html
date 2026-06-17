@@ -1,0 +1,406 @@
+<!-- client-cabinet.html - ПОЛНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ -->
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет клиента - РемонтЭксперт</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/client-cabinet.css">
+
+    <!-- Добавляем иконки FontAwesome -->
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <script src="js/redirect.js"></script>
+  </head>
+  <body>
+    <div class="personal-cabinet">
+      <div class="personal-container">
+        <header class="cabinet-header">
+          <div class="header-left">
+            <h1 class="cabinet-title">Личный кабинет клиента</h1>
+            <!-- Добавляем блок с городом -->
+            <div class="cabinet-city" id="cabinetCity">
+              <i class="fas fa-map-marker-alt"></i>
+              <span id="currentCity">Город не выбран</span>
+            </div>
+          </div>
+          <nav class="cabinet-nav">
+            <!-- Кнопка поиска мастеров -->
+            <a href="#" class="nav-link" id="findMasterBtn">
+              <i class="fas fa-search"></i> Найти мастера
+            </a>
+            <a href="index.html" class="nav-link">
+              <i class="fas fa-home"></i> Главная
+            </a>
+            <a href="#" id="logoutBtn" class="nav-link logout">
+              <i class="fas fa-sign-out-alt"></i> Выйти
+            </a>
+          </nav>
+        </header>
+
+        <div class="cabinet-content">
+          <aside class="sidebar">
+            <div class="user-card">
+              <div class="user-avatar" id="userAvatar">К</div>
+              <h2 class="user-name" id="userName">Клиент</h2>
+              <span class="user-role client">Клиент</span>
+            </div>
+
+            <!-- Блок с рейтингом -->
+            <div class="rating-display">
+              <div class="rating-value" id="sidebarRatingValue">5,0</div>
+              <div class="rating-stars" id="sidebarRatingStars">⭐⭐⭐⭐⭐</div>
+              <div class="rating-count" id="sidebarRatingCount">2 отзыва</div>
+              <a href="#" class="reviews-link"
+                id="openReviewsModalBtn">отзывы</a>
+            </div>
+
+            <nav class="sidebar-menu">
+              <a href="#" class="menu-item active" data-tab="my-orders">
+                <i class="fas fa-clipboard-list"></i> Мои заказы
+              </a>
+              <a href="#" class="menu-item" data-tab="archive">
+                <i class="fas fa-archive"></i> Архив заказов
+              </a>
+              <a href="#" class="menu-item" data-tab="messages">
+                <i class="fas fa-comments"></i> Сообщения
+                <span id="unreadMessagesBadge" class="unread-badge"
+                  style="display: none;">0</span>
+              </a>
+              <a href="#" class="menu-item" id="openCreateOrderBtn">
+                <i class="fas fa-plus-circle"></i> Создать заказ
+              </a>
+            </nav>
+          </aside>
+
+          <main class="main-content">
+            <div class="welcome-banner">
+              <div class="welcome-content">
+                <h2>Добро пожаловать, <span id="welcomeName">Клиент</span>!
+                  👋</h2>
+                <p>Здесь вы можете управлять своими заказами и общаться с
+                  мастерами</p>
+              </div>
+            </div>
+
+            <div class="tab-content active" id="my-ordersTab">
+              <h2><i class="fas fa-clipboard-list"></i> Мои заказы</h2>
+              <div id="clientOrdersList">
+                <div class="empty-state">
+                  <i class="fas fa-clipboard-list fa-3x"></i>
+                  <h3>У вас пока нет заказов</h3>
+                </div>
+              </div>
+            </div>
+
+            <!-- Вкладка "Сообщения" -->
+            <div class="tab-content" id="messagesTab">
+              <div id="chatContainer"></div>
+            </div>
+
+            <div class="tab-content" id="archiveTab">
+              <div class="archive-header-with-reminder">
+                <h2><i class="fas fa-archive"></i> Архив заказов</h2>
+                <div class="review-reminder-archive" style="display: none;">
+                  <i class="fas fa-star"></i>
+                  <span>Не забудьте оставить отзыв о мастере!</span>
+                </div>
+              </div>
+              <div id="clientArchiveList"></div>
+            </div>
+
+            <!-- Новая вкладка "Ждут отзыва" -->
+            <div class="tab-content" id="pendingReviewsTab">
+              <h2><i class="fas fa-star"></i> Заказы, ждущие отзыва</h2>
+              <div id="pendingReviewsList"></div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно создания заказа -->
+    <div id="createOrderModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Создать новый заказ</h2>
+          <button class="close-modal"
+            onclick="hideCreateOrderModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="createOrderForm">
+            <div class="form-group">
+              <label>Вид работ *</label>
+              <div class="order-categories" id="orderCategories"></div>
+              <input type="hidden" id="selectedCategory" required>
+            </div>
+            <div class="form-group">
+              <label for="orderTitle">Краткое описание задачи *</label>
+              <input type="text" id="orderTitle" class="form-control"
+                placeholder="Например: починить кран на кухне" required>
+            </div>
+            <div class="form-group">
+              <label for="orderDescription">Подробное описание задачи *</label>
+              <textarea id="orderDescription" rows="4" class="form-control"
+                placeholder="Опишите подробно, что нужно сделать..."
+                required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="orderPhone">Телефон для связи *</label>
+              <input type="tel" id="orderPhone" class="form-control"
+                placeholder="+7 (999) 123-45-67" required>
+              <small>По этому номеру мастера смогут с вами связаться</small>
+            </div>
+            <div class="form-group">
+              <div class="checkbox-group">
+                <input type="checkbox" id="orderPhoneVisible" checked>
+                <label for="orderPhoneVisible" id="phoneVisibilityText">
+                  <i class="fas fa-eye"></i>
+                  <strong>Исполнители видят ваш номер телефона и могут звонить
+                    вам сами</strong>
+                </label>
+              </div>
+              <small>Если не отмечено, исполнители не увидят ваш номер и смогут
+                связаться только через чат</small>
+            </div>
+            <div class="form-group">
+              <label for="orderAddress">Адрес выполнения работ</label>
+              <input type="text" id="orderAddress" class="form-control"
+                placeholder="ул. Примерная, д. 1">
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary"
+                onclick="hideCreateOrderModal()">Отмена</button>
+              <button type="submit" class="btn btn-primary">Опубликовать
+                заказ</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно с отзывами -->
+    <div id="ratingModal" class="modal">
+      <div class="modal-content rating-modal-content">
+        <div class="rating-modal-header">
+          <h2>Отзывы</h2>
+          <button class="close-modal" onclick="hideRatingModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <!-- Скрытые элементы для рейтинга -->
+          <div style="display: none;">
+            <div class="rating-value" id="modalRatingValue">0</div>
+            <div class="rating-stars" id="modalRatingStars">☆☆☆☆☆</div>
+            <div class="rating-count" id="modalRatingCount">на основании 0
+              оценок</div>
+            <div class="reviews-section">
+              <h3>Опубликованные отзывы <span
+                  id="modalReviewsCount">0</span></h3>
+            </div>
+          </div>
+          <!-- Основной контейнер для списка отзывов -->
+          <div class="reviews-list" id="modalReviewsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно поиска мастеров -->
+    <div id="findMasterModal" class="modal">
+      <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+          <h2><i class="fas fa-search"></i> Поиск мастеров</h2>
+          <button class="close-modal"
+            onclick="window.hideFindMasterModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <!-- Форма поиска -->
+          <div class="search-form">
+            <div class="form-group">
+              <label><i class="fas fa-city"></i> Город</label>
+              <input type="text" id="searchCity" class="form-control"
+                placeholder="Начните вводить город..."
+                value="Тольятти, Самарская область">
+              <small>Мастера будут показаны для этого города</small>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-tools"></i> Специализации</label>
+              <div class="specializations-grid" id="searchSpecializationsGrid">
+                <!-- Чекбоксы будут загружены через JS -->
+              </div>
+              <small>Выберите одну или несколько специализаций</small>
+            </div>
+
+            <div class="form-actions" style="justify-content: center;">
+              <button type="button" class="btn btn-primary"
+                id="searchMastersBtn">
+                <i class="fas fa-search"></i> Найти мастеров
+              </button>
+              <button type="button" class="btn btn-secondary"
+                onclick="window.hideFindMasterModal()">
+                Отмена
+              </button>
+            </div>
+          </div>
+
+          <!-- Результаты поиска -->
+          <div id="searchResults" style="display: none; margin-top: 30px;">
+            <div class="results-header">
+              <h3><i class="fas fa-users"></i> Найденные мастера <span
+                  id="mastersCount"></span></h3>
+            </div>
+            <div id="mastersList" class="masters-grid">
+              <!-- Карточки мастеров -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно закрытия заказа -->
+    <div id="closeOrderModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Почему вы закрываете заказ?</h2>
+          <button class="close-modal" onclick="hideCloseOrderModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="closeOrderForm">
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="closeReason" value="agreed" checked>
+                Я договорился с мастером
+              </label>
+            </div>
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="closeReason" value="other_resource">
+                Я нашёл мастера на другом ресурсе
+              </label>
+            </div>
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="closeReason" value="not_actual">
+                Не актуально
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary"
+                onclick="hideCloseOrderModal()">Отмена</button>
+              <button type="button" class="btn btn-primary"
+                onclick="processCloseOrder()">Подтвердить</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно выбора мастера -->
+    <div id="chooseMasterModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Выберите мастера</h2>
+          <button class="close-modal"
+            onclick="hideChooseMasterModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <p class="info-text">Мы рады, что помогли вам найти мастера.
+            Подскажите, пожалуйста, кому вы поручили выполнение заказа:</p>
+          <div id="mastersListContainer" class="masters-radio-list"></div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary"
+              onclick="hideChooseMasterModal()">Отмена</button>
+            <button type="button" class="btn btn-primary"
+              onclick="assignMasterAndClose()">Выбрать</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно благодарности -->
+    <div id="thanksModal" class="modal">
+      <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <div class="modal-header">
+          <h2>Спасибо!</h2>
+          <button class="close-modal" onclick="hideThanksModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <i class="fas fa-smile"
+            style="font-size: 48px; color: #4CAF50; margin-bottom: 15px;"></i>
+          <p style="font-size: 18px;">Будем рады видеть вас снова!</p>
+          <button class="btn btn-primary" onclick="hideThanksModal()"
+            style="margin-top: 15px;">ОК</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно просмотра анкеты мастера -->
+    <div id="masterProfileModal" class="modal">
+      <div class="modal-content master-profile-content"
+        style="max-width: 800px;">
+        <div class="modal-header">
+          <h2>Анкета мастера</h2>
+          <button class="close-modal"
+            onclick="hideMasterProfileModal()">×</button>
+        </div>
+        <div class="modal-body" id="masterProfileContent">
+          <!-- Динамическое содержимое -->
+        </div>
+      </div>
+    </div>
+
+    <!-- НОВОЕ МОДАЛЬНОЕ ОКНО: Отзыв о мастере -->
+    <div id="clientReviewModal" class="modal">
+      <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+          <h2>Оставить отзыв о мастере</h2>
+          <span class="close" onclick="hideClientReviewModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <div class="review-master-info">
+            <strong>Мастер:</strong> <span id="reviewMasterName"></span>
+          </div>
+          <form id="clientReviewForm">
+            <div class="form-group">
+              <label>Оценка</label>
+              <div class="rating-stars">
+                <input type="radio" name="clientReviewRating" value="5"
+                  id="clientStar5"><label for="clientStar5">★</label>
+                <input type="radio" name="clientReviewRating" value="4"
+                  id="clientStar4"><label for="clientStar4">★</label>
+                <input type="radio" name="clientReviewRating" value="3"
+                  id="clientStar3"><label for="clientStar3">★</label>
+                <input type="radio" name="clientReviewRating" value="2"
+                  id="clientStar2"><label for="clientStar2">★</label>
+                <input type="radio" name="clientReviewRating" value="1"
+                  id="clientStar1"><label for="clientStar1">★</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="clientReviewComment">Комментарий
+                (необязательно)</label>
+              <textarea id="clientReviewComment" rows="4" class="form-control"
+                placeholder="Ваш отзыв о мастере..."></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary"
+                onclick="submitClientReview()">Отправить отзыв</button>
+              <button type="button" class="btn btn-secondary"
+                onclick="hideClientReviewModal()">Отмена</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/chat-api.js"></script>
+    <script src="js/chat-ui.js"></script>
+    <script src="js/client-cabinet.js?v=48"></script>
+
+  </body>
+</html>

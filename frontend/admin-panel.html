@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+    .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+    .header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 20px; border-radius: 6px; cursor: pointer; }
+    .stats { display: flex; gap: 20px; padding: 20px 30px; background: #f8f9ff; flex-wrap: wrap; }
+    .stat-card { flex: 1; min-width: 120px; background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .stat-card .num { font-size: 28px; font-weight: bold; color: #667eea; }
+    .table-wrap { padding: 20px 30px; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    th { background: #667eea; color: white; padding: 12px; text-align: left; }
+    td { padding: 12px; border-bottom: 1px solid #eee; }
+    tr:hover { background: #f8f9ff; }
+    .clickable-btn { background: #4299e1; color: white; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; }
+    .clickable-btn:hover { background: #3182ce; }
+    .action-btn { padding: 5px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; background: #e53e3e; color: white; }
+    .action-btn:hover { background: #c53030; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: white; border-radius: 12px; max-width: 600px; width: 90%; max-height: 80vh; overflow: auto; padding: 20px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
+    .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; }
+    .sub-table { margin: 20px 0 30px 20px; }
+    .sub-table h3 { color: #667eea; margin-bottom: 10px; }
+    .date-cell { font-size: 13px; color: #4a5568; }
+    .date-cell .time { font-size: 11px; color: #a0aec0; }
+    .badge-new { background: #48bb78; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; }
+    .badge-old { background: #ed8936; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>👑 Админ-панель</h1>
+    <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
+  </div>
+  <div class="stats" id="stats">
+    <div class="stat-card"><div class="num" id="totalUsers">0</div><div>Всего</div></div>
+    <div class="stat-card"><div class="num" id="totalMasters">0</div><div>Мастеров</div></div>
+    <div class="stat-card"><div class="num" id="totalClients">0</div><div>Заказчиков</div></div>
+    <div class="stat-card"><div class="num" id="totalOrders">0</div><div>Заказов</div></div>
+  </div>
+  <div class="table-wrap">
+    <h2>📊 Города</h2>
+    <table><thead><tr><th>#</th><th>Город</th><th>Мастеров</th><th>Заказчиков</th></tr></thead><tbody id="citiesList"></tbody></table>
+  </div>
+  <div id="subTablesContainer"></div>
+</div>
+
+<div id="ordersModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header"><h3>📋 Активные заказы</h3><button class="modal-close" onclick="closeModal('ordersModal')">&times;</button></div>
+    <div id="ordersModalBody"></div>
+  </div>
+</div>
+
+<script>
+let token = '';
+let categoriesMap = {};
+
+async function loadCategories() {
+  try {
+    const res = await fetch('/api/admin/categories', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    if (data.success) {
+      categoriesMap = {};
+      data.data.forEach(c => categoriesMap[c.id] = c.name);
+    }
+  } catch(e) {}
+}
+
+function formatSpecs(specs) {
+  if (!specs || !specs.length) return '—';
+  return specs.map(id => categoriesMap[id] || id).join(', ');
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const date = new Date(d);
+  return `<div class="date-cell">${date.toLocaleDateString('ru-RU')} <span class="time">${date.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'})}</span></div>`;
+}
+
+function daysAgo(d) {
+  if (!d) return '—';
+  const diff = Math.floor((Date.now() - new Date(d)) / (1000*60*60*24));
+  if (diff === 0) return '<span class="badge-new">Сегодня</span>';
+  if (diff < 7) return `<span class="badge-new">${diff} дн.</span>`;
+  if (diff < 30) return `<span class="badge-old">${Math.floor(diff/7)} нед.</span>`;
+  return `${Math.floor(diff/30)} мес.`;
+}
+
+async function loadStats() {
+  token = localStorage.getItem('token');
+  if (!token) { window.location.href = 'admin-login.html'; return; }
+  await loadCategories();
+  try {
+    const res = await fetch('/api/admin/users', { headers: { Authorization: 'Bearer ' + token } });
+    const data = await res.json();
+    if (!data.success) return;
+    const users = data.data;
+    const cities = {};
+    let totalMasters = 0, totalClients = 0;
+    users.forEach(u => {
+      const city = u.city || 'Не указан';
+      if (!cities[city]) cities[city] = { masters: 0, clients: 0 };
+      if (u.role === 'master') { cities[city].masters++; totalMasters++; }
+      else if (u.role === 'client') { cities[city].clients++; totalClients++; }
+    });
+    document.getElementById('totalUsers').innerText = users.length;
+    document.getElementById('totalMasters').innerText = totalMasters;
+    document.getElementById('totalClients').innerText = totalClients;
+    const ordersRes = await fetch('/api/orders', { headers: { Authorization: 'Bearer ' + token } });
+    const ordersData = await ordersRes.json();
+    if (ordersData.success) document.getElementById('totalOrders').innerText = ordersData.data.length;
+    let idx = 1, html = '';
+    for (const [city, counts] of Object.entries(cities)) {
+      html += `<tr><td>${idx++}</td><td>${city}</td><td><button class="clickable-btn" onclick="showMasters('${city}')">👨‍🔧 ${counts.masters}</button></td><td><button class="clickable-btn" onclick="showClients('${city}')">👤 ${counts.clients}</button></td></tr>`;
+    }
+    document.getElementById('citiesList').innerHTML = html;
+  } catch(e) { console.error(e); }
+}
+
+async function showMasters(city) {
+  const res = await fetch('/api/admin/users', { headers: { Authorization: 'Bearer ' + token } });
+  const data = await res.json();
+  const masters = data.data.filter(u => u.city === city && u.role === 'master');
+  let html = `<div class="sub-table"><h3>🔧 Мастера: ${city}</h3>
+    <table><thead><tr><th>#</th><th>Имя</th><th>Телефон</th><th>Специализации</th><th>Отработано</th><th>Регистрация</th><th>Последний вход</th><th>Действия</th></tr></thead><tbody>`;
+  masters.forEach((m, i) => {
+    html += `<tr data-user-id="${m.id}">
+      <td>${i+1}</td><td>${m.name}</td><td>${m.phone}</td>
+      <td>${formatSpecs(m.specializations)}</td>
+      <td>${m.reviewsCount || 0}</td>
+      <td>${formatDate(m.createdAt)} ${daysAgo(m.createdAt)}</td>
+      <td>${formatDate(m.lastLogin)} ${daysAgo(m.lastLogin)}</td>
+      <td><button class="action-btn" onclick="deleteUser(${m.id}, 'master', '${city}')">🗑 Удалить</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('subTablesContainer').innerHTML = html;
+}
+
+async function showClients(city) {
+  const res = await fetch('/api/admin/users', { headers: { Authorization: 'Bearer ' + token } });
+  const data = await res.json();
+  const clients = data.data.filter(u => u.city === city && u.role === 'client');
+  let html = `<div class="sub-table"><h3>👥 Заказчики: ${city}</h3>
+    <table><thead><tr><th>#</th><th>Имя</th><th>Телефон</th><th>Заказов</th><th>Активных</th><th>Регистрация</th><th>Последний вход</th><th>Действия</th></tr></thead><tbody>`;
+  for (let i = 0; i < clients.length; i++) {
+    const c = clients[i];
+    const ordRes = await fetch(`/api/admin/users/${c.id}/orders`, { headers: { Authorization: 'Bearer ' + token } });
+    const ordData = await ordRes.json();
+    const all = ordData.data || [];
+    const active = all.filter(o => o.status === 'new' || o.status === 'in_progress').length;
+    html += `<tr data-user-id="${c.id}">
+      <td>${i+1}</td><td>${c.name}</td><td>${c.phone}</td>
+      <td>${all.length}</td>
+      <td><button class="clickable-btn" onclick="showActiveOrders(${c.id}, '${c.name}')">📋 ${active}</button></td>
+      <td>${formatDate(c.createdAt)} ${daysAgo(c.createdAt)}</td>
+      <td>${formatDate(c.lastLogin)} ${daysAgo(c.lastLogin)}</td>
+      <td><button class="action-btn" onclick="deleteUser(${c.id}, 'client', '${city}')">🗑 Удалить</button></td>
+    </tr>`;
+  }
+  html += '</tbody></table></div>';
+  document.getElementById('subTablesContainer').innerHTML = html;
+}
+
+async function showActiveOrders(userId, userName) {
+  const res = await fetch(`/api/admin/users/${userId}/orders`, { headers: { Authorization: 'Bearer ' + token } });
+  const data = await res.json();
+  const active = (data.data || []).filter(o => o.status === 'new' || o.status === 'in_progress');
+  const modalBody = document.getElementById('ordersModalBody');
+  if (!active.length) { modalBody.innerHTML = '<p>Нет активных заказов</p>'; }
+  else {
+    modalBody.innerHTML = `<h4>📦 Активные заказы: ${userName}</h4>` + active.map(o =>
+      `<div style="background:#f8f9ff;border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px;">
+        <strong>${o.title}</strong><br>${o.description}<br>Статус: ${o.status === 'new' ? '🟡 Ожидает' : '🟢 В работе'}
+      </div>`
+    ).join('');
+  }
+  document.getElementById('ordersModal').style.display = 'flex';
+}
+
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+async function deleteUser(id, role, city) {
+  if (!confirm(`Удалить ${role}?`)) return;
+  try {
+    const res = await fetch(`/api/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('✅ Пользователь удалён');
+      // Полностью перезагружаем всю админ-панель
+      loadStats();
+      // Если была открыта подтаблица, обновляем её
+      if (city) {
+        if (role === 'master') showMasters(city);
+        else showClients(city);
+      }
+    } else {
+      alert('❌ Ошибка: ' + data.message);
+    }
+  } catch(e) {
+    alert('❌ Ошибка: ' + e.message);
+  }
+}
+
+document.getElementById('logoutBtn').onclick = () => { localStorage.clear(); window.location.href = 'index.html'; };
+loadStats();
+</script>
+</body>
+</html>
