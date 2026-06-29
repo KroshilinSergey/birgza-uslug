@@ -1,0 +1,43 @@
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+exports.protect = async (req, res, next) => {
+  try {
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'Доступ запрещен. Токен отсутствует.' });
+    }
+
+console.log("🔍 Проверка токена с секретом:", "remont_expert_secret_key_2026_very_strong_password_12345");
+    const decoded = jwt.verify(token, "remont_expert_secret_key_2026_very_strong_password_12345");
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Пользователь не найден' });
+    }
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(401).json({ success: false, message: 'Недействительный токен' });
+  }
+};
+
+exports.authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: `Роль ${req.user.role} не имеет доступа к этому ресурсу`
+      });
+    }
+    next();
+  };
+};
+
+exports.generateToken = (id) => {
+  return jwt.sign({ id }, "remont_expert_secret_key_2026_very_strong_password_12345", {
+    expiresIn: '7d'
+  });
+};

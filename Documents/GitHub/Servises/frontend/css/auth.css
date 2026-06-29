@@ -1,0 +1,303 @@
+
+/* Стили для поля телефона с маской */
+input[type="tel"].phone-mask {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  letter-spacing: 2px;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: white;
+  color: #2d3748;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+input[type="tel"].phone-mask:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  outline: none;
+}
+
+input[type="tel"].phone-mask::placeholder {
+  font-family: Arial, sans-serif;
+  letter-spacing: normal;
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+/* Стили для формы входа */
+.auth-card {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 40px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.auth-card h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+  color: #2d3748;
+}
+
+.auth-card .form-group {
+  margin-bottom: 20px;
+}
+
+.auth-card .form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.auth-card .form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.auth-card .form-group input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  outline: none;
+}
+
+.auth-card .btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auth-card .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+.auth-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.auth-footer a {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.auth-footer a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Выбор роли */
+.role-selection {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.role-selection p {
+  color: #4a5568;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.role-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-role {
+  padding: 16px 32px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+  justify-content: center;
+}
+
+.btn-role:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.btn-role.client:hover {
+  border-color: #4299e1;
+  background: #ebf8ff;
+}
+
+.btn-role.master:hover {
+  border-color: #48bb78;
+  background: #f0fff4;
+}
+
+.btn-role i {
+  font-size: 20px;
+}
+
+.selected-role-badge {
+  background: #f7fafc;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.selected-role-badge i {
+  color: #48bb78;
+  font-size: 18px;
+}
+
+.selected-role-badge strong {
+  color: #2d3748;
+}
+
+.change-role-btn {
+  margin-left: auto;
+  padding: 4px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 12px;
+  color: #4a5568;
+  transition: all 0.3s ease;
+}
+
+.change-role-btn:hover {
+  background: #edf2f7;
+  border-color: #667eea;
+}
+
+/* Специализации */
+.specializations-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.specialization-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.specialization-checkbox:hover {
+  border-color: #667eea;
+  background: #f7fafc;
+}
+
+.specialization-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.specialization-checkbox input[type="checkbox"]:checked + span {
+  color: #667eea;
+}
+
+.specialization-checkbox:has(input:checked) {
+  border-color: #667eea;
+  background: #ebf8ff;
+}
+
+.spec-group {
+  margin-bottom: 15px;
+}
+
+.spec-group-title {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.spec-group.other-group {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 15px;
+}
+
+.other-toggle {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 0;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.other-toggle:hover {
+  color: #764ba2;
+}
+
+.other-specs {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px;
+    margin: 10px;
+  }
+  
+  .btn-role {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-width: 120px;
+  }
+  
+  .selected-role-badge {
+    font-size: 14px;
+  }
+  
+  .change-role-btn {
+    margin-left: 0;
+    margin-top: 5px;
+    width: 100%;
+  }
+}

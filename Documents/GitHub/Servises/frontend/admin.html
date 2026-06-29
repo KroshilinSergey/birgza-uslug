@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | Биржа услуг</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="icon" href="img/logo.png">
+    <script src="js/redirect.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-inner">
+          <a href="index.html" class="logo">
+            <img src="img/logo.png" alt="Биржа услуг">
+            <span>Биржа услуг</span>
+          </a>
+          <nav class="nav">
+            <a href="index.html">Главная</a>
+            <a href="pages/masters.html">Мастера</a>
+            <a href="pages/post-order.html">Разместить заказ</a>
+            <a href="pages/become-master.html">Стать мастером</a>
+            <a href="register.html" class="btn btn-outline">Регистрация</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container">
+        <div class="admin-container">
+          <div class="admin-header">
+            <h1>📊 Админ-панель</h1>
+            <div>
+              <button id="logoutBtn" class="btn-admin btn-secondary">🚪
+                Выйти</button>
+              <button id="exportBtn" class="btn-admin btn-primary">📥 Экспорт
+                данных</button>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card">
+              <h3>Заказы</h3>
+              <span id="ordersCount"
+                style="font-size: 24px; font-weight: bold;">0</span>
+            </div>
+            <div class="stat-card">
+              <h3>Заявки мастеров</h3>
+              <span id="applicationsCount"
+                style="font-size: 24px; font-weight: bold;">0</span>
+            </div>
+            <div class="stat-card">
+              <h3>Действия в логе</h3>
+              <span id="actionsCount"
+                style="font-size: 24px; font-weight: bold;">0</span>
+            </div>
+          </div>
+
+          <!-- ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ (НОВАЯ) -->
+          <h2>👥 Пользователи (всего: <span id="usersCount">0</span>)</h2>
+          <table id="usersTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Роль</th>
+                <th>Город</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <h2>📋 Заказы</h2>
+          <table id="ordersTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Услуга</th>
+                <th>Дата</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <h2>👷 Заявки мастеров</h2>
+          <table id="applicationsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Специализация</th>
+                <th>Опыт</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <h2>📝 Журнал действий</h2>
+          <button id="clearLogBtn" class="btn-admin btn-warning">🗑️ Очистить
+            журнал</button>
+          <table id="actionsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Тип действия</th>
+                <th>Детали</th>
+                <th>Время</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-inner">
+          <div class="footer-col">
+            <div class="logo">
+              <img src="img/logo.png" alt="Биржа услуг">
+              <span>Биржа услуг</span>
+            </div>
+            <p class="footer-about">Агрегатор проверенных мастеров по ремонту.
+              Гарантия качества и лучшие цены.</p>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-title">Меню</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Главная</a></li>
+              <li><a href="pages/masters.html">Мастера</a></li>
+              <li><a href="pages/post-order.html">Разместить заказ</a></li>
+              <li><a href="pages/become-master.html">Стать мастером</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-title">Контакты</h3>
+            <ul class="footer-contacts">
+              <li><a href="tel:+78001234567">8 (800) 123-45-67</a></li>
+              <li><a
+                  href="mailto:info@remont-expert.ru">info@remont-expert.ru</a></li>
+              <li>Москва, ул. Строителей, 15</li>
+              <li>Работаем: 9:00 - 21:00</li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-title">Мы в соцсетях</h3>
+            <div class="social-links">
+              <a href="#" class="social-link">VK</a>
+              <a href="#" class="social-link">Telegram</a>
+              <a href="#" class="social-link">YouTube</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 Биржа услуг. Все права защищены.</p>
+          <p><a href="#">Политика конфиденциальности</a> | <a
+              href="#">Пользовательское соглашение</a></p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- СКРИПТЫ -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/admin-system.js"></script>
+    <script src="js/city-manager.js"></script>
+  </body>
+</html>

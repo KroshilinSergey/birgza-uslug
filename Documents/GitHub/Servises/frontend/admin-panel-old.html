@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ-панель</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;padding:20px}
+.container{max-width:1400px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.1);overflow:hidden}
+.header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px 30px;display:flex;justify-content:space-between;align-items:center}
+.logout-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;padding:8px 20px;border-radius:6px;cursor:pointer}
+.stats{display:flex;gap:20px;padding:20px 30px;background:#f8f9ff;flex-wrap:wrap}
+.stat-card{flex:1;min-width:120px;background:#fff;padding:20px;border-radius:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.stat-card .num{font-size:28px;font-weight:bold;color:#667eea}
+.table-wrap{padding:20px 30px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+th{background:#667eea;color:#fff;padding:12px;text-align:left;font-size:13px}
+td{padding:12px;border-bottom:1px solid #eee;font-size:13px}
+tr:hover{background:#f8f9ff}
+.clickable-btn{background:#4299e1;color:#fff;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}
+.clickable-btn:hover{background:#3182ce}
+.action-btn{padding:5px 12px;border:none;border-radius:4px;cursor:pointer;font-size:12px;background:#e53e3e;color:#fff}
+.action-btn:hover{background:#c53030}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);justify-content:center;align-items:center;z-index:1000}
+.modal-content{background:#fff;border-radius:12px;max-width:600px;width:90%;max-height:80vh;overflow:auto;padding:20px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ddd;padding-bottom:10px;margin-bottom:15px}
+.modal-close{background:none;border:none;font-size:24px;cursor:pointer}
+.sub-table{margin:20px 0 30px 20px}
+.sub-table h3{color:#667eea;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h1>👑 Админ-панель</h1><button class="logout-btn" id="logoutBtn">🚪 Выйти</button></div>
+<div class="stats">
+<div class="stat-card"><div class="num" id="totalUsers">0</div><div>Всего</div></div>
+<div class="stat-card"><div class="num" id="totalMasters">0</div><div>Мастеров</div></div>
+<div class="stat-card"><div class="num" id="totalClients">0</div><div>Заказчиков</div></div>
+<div class="stat-card"><div class="num" id="totalOrders">0</div><div>Заказов</div></div>
+</div>
+<div class="table-wrap">
+<h2>📊 Города</h2>
+<table><thead><tr><th>#</th><th>Город</th><th>Мастеров</th><th>Заказчиков</th></tr></thead><tbody id="citiesList"></tbody></table>
+</div>
+<div id="subTablesContainer"></div>
+</div>
+
+<div id="ordersModal" class="modal">
+<div class="modal-content">
+<div class="modal-header"><h3 id="ordersModalTitle">📋 Заказы</h3><button class="modal-close" onclick="closeModal('ordersModal')">&times;</button></div>
+<div id="ordersModalBody"></div>
+</div>
+</div>
+
+<script>
+let token = '';
+let allOrdersCache = [];
+let allUsersCache = [];
+
+function formatDate(dateStr){
+if(!dateStr) return '—';
+try{
+const d=new Date(dateStr);
+return d.toLocaleDateString('ru-RU')+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+}catch(e){return dateStr;}
+}
+
+function isRealOrder(order){
+if(!order) return false;
+if(!order.customerId) return false;
+if(!order.title) return false;
+if(order.title.toLowerCase().includes('чат')) return false;
+if(order.title.toLowerCase().includes('сообщение')) return false;
+if(order.title.trim()==='') return false;
+if(order.isTemporary===true) return false;
+if(!order.status) return false;
+if(order.status==='cancelled' && !order.description) return false;
+return true;
+}
+
+async function loadStats() {
+token = localStorage.getItem('token');
+if(!token){window.location.href='admin-login.html';return;}
+try{
+const res=await fetch('/api/admin/users',{headers:{Authorization:'Bearer '+token}});
+const data=await res.json();
+if(!data.success)throw new Error(data.message);
+allUsersCache=data.data||[];
+const users=allUsersCache;
+const cities={};
+let totalMasters=0,totalClients=0;
+users.forEach(u=>{
+const city=u.city||'Не указан';
+if(!cities[city])cities[city]={masters:0,clients:0};
+if(u.role==='master'){cities[city].masters++;totalMasters++;}
+else if(u.role==='client'){cities[city].clients++;totalClients++;}
+});
+document.getElementById('totalUsers').innerText=users.length;
+document.getElementById('totalMasters').innerText=totalMasters;
+document.getElementById('totalClients').innerText=totalClients;
+
+const ordersRes=await fetch('/api/orders',{headers:{Authorization:'Bearer '+token}});
+const ordersData=await ordersRes.json();
+if(ordersData.success){
+allOrdersCache=(ordersData.data||[]).filter(o=>isRealOrder(o));
+document.getElementById('totalOrders').innerText=allOrdersCache.length;
+}
+
+let idx=1,html='';
+for(const[city,counts]of Object.entries(cities)){
+html+=`<tr><td>${idx++}</td><td>${city}</td><td><button class="clickable-btn" onclick="showMasters('${city}')">👨‍🔧 ${counts.masters}</button></td><td><button class="clickable-btn" onclick="showClients('${city}')">👤 ${counts.clients}</button></td></tr>`;
+}
+document.getElementById('citiesList').innerHTML=html;
+}catch(e){console.error(e);document.getElementById('citiesList').innerHTML='<tr><td colspan="4">Ошибка загрузки</td></tr>';}
+}
+
+function getClientOrders(clientId){
+return allOrdersCache.filter(o=>Number(o.customerId)===Number(clientId));
+}
+
+function getActiveOrders(clientId){
+return getClientOrders(clientId).filter(o=>o.status==='new'||o.status==='in_progress');
+}
+
+async function showMasters(city){
+const masters=allUsersCache.filter(u=>u.city===city&&u.role==='master');
+let html=`<div class="sub-table"><h3>🔧 Мастера: ${city}</h3>
+<table><thead><tr><th>#</th><th>Имя</th><th>Телефон</th><th>Специализации</th><th>Отработано</th><th>Регистрация</th><th>Последний вход</th><th>Действия</th></tr></thead><tbody>`;
+masters.forEach((m,i)=>{
+html+=`<tr>
+<td>${i+1}</td>
+<td>${m.name}</td>
+<td>${m.phone}</td>
+<td>${m.specializations?m.specializations.join(', '):'—'}</td>
+<td>${m.reviewsCount||0}</td>
+<td>${formatDate(m.createdAt)}</td>
+<td>${formatDate(m.lastLogin)}</td>
+<td><button class="action-btn" onclick="deleteUser(${m.id},'master','${city}')">🗑 Удалить</button></td>
+</tr>`;
+});
+html+='</tbody></table></div>';
+document.getElementById('subTablesContainer').innerHTML=html;
+}
+
+async function showClients(city){
+const clients=allUsersCache.filter(u=>u.city===city&&u.role==='client');
+let html=`<div class="sub-table"><h3>👥 Заказчики: ${city}</h3>
+<table><thead><tr><th>#</th><th>Имя</th><th>Телефон</th><th>Всего заказов</th><th>Активные</th><th>Регистрация</th><th>Последний вход</th><th>Действия</th></tr></thead><tbody>`;
+clients.forEach((c,i)=>{
+const orders=getClientOrders(c.id);
+const active=getActiveOrders(c.id);
+html+=`<tr>
+<td>${i+1}</td>
+<td>${c.name}</td>
+<td>${c.phone}</td>
+<td><button class="clickable-btn" onclick="showAllOrders(${c.id},'${c.name}')">📋 ${orders.length}</button></td>
+<td><button class="clickable-btn" onclick="showActiveOrders(${c.id},'${c.name}')">📋 ${active.length}</button></td>
+<td>${formatDate(c.createdAt)}</td>
+<td>${formatDate(c.lastLogin)}</td>
+<td><button class="action-btn" onclick="deleteUser(${c.id},'client','${city}')">🗑 Удалить</button></td>
+</tr>`;
+});
+html+='</tbody></table></div>';
+document.getElementById('subTablesContainer').innerHTML=html;
+}
+
+function showAllOrders(userId,userName){
+const orders=getClientOrders(userId);
+const modalBody=document.getElementById('ordersModalBody');
+document.getElementById('ordersModalTitle').textContent='📋 Все заказы: '+userName;
+if(!orders.length){modalBody.innerHTML='<p>Нет заказов</p>';}
+else{
+modalBody.innerHTML=orders.map(o=>
+`<div style="background:#f8f9ff;border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px;">
+<strong>${o.title}</strong><br>${o.description||''}<br>Статус: ${o.status} ${o.masterId?'(мастер назначен)':'(нет мастера)'}<br>Создан: ${formatDate(o.createdAt)}
+</div>`
+).join('');
+}
+document.getElementById('ordersModal').style.display='flex';
+}
+
+function showActiveOrders(userId,userName){
+const orders=getClientOrders(userId).filter(o=>o.status==='new'||o.status==='in_progress');
+const modalBody=document.getElementById('ordersModalBody');
+document.getElementById('ordersModalTitle').textContent='📋 Активные заказы: '+userName;
+if(!orders.length){modalBody.innerHTML='<p>Нет активных заказов</p>';}
+else{
+modalBody.innerHTML=orders.map(o=>
+`<div style="background:#f8f9ff;border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px;">
+<strong>${o.title}</strong><br>${o.description||''}<br>Статус: ${o.status==='new'?'🟡 Ожидает мастера':'🟢 В работе'}<br>Создан: ${formatDate(o.createdAt)}
+</div>`
+).join('');
+}
+document.getElementById('ordersModal').style.display='flex';
+}
+
+function closeModal(id){document.getElementById(id).style.display='none';}
+
+async function deleteUser(id,role,city){
+if(!confirm(`Удалить ${role}?`))return;
+try{
+const res=await fetch(`/api/admin/users/${id}`,{method:'DELETE',headers:{Authorization:'Bearer '+token}});
+const data=await res.json();
+if(data.success){alert('✅ Пользователь удалён');loadStats();if(city){if(role==='master')showMasters(city);else showClients(city);}}
+else alert('❌ Ошибка: '+data.message);
+}catch(e){alert('❌ Ошибка: '+e.message);}
+}
+
+document.getElementById('logoutBtn').onclick=()=>{localStorage.clear();window.location.href='index.html';};
+loadStats();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+cat > ~/биржа-услуг_рф/public_html/.htaccess << 'EOF'
+RewriteEngine On
+
+# Прокси для всех запросов, начинающихся с /api
+RewriteRule ^api/(.*)$ http://localhost:3005/api/$1 [P,L]
+
+# Разрешить кросс-доменные запросы (CORS)
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+EOF

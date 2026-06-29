@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет мастера - РемонтЭксперт</title>
+    <!-- Добавляем FontAwesome -->
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/master-cabinet.css">
+    <script src="js/redirect.js"></script>
+  </head>
+  <body>
+    <div class="personal-cabinet">
+      <div class="personal-container">
+
+        <!-- Шапка -->
+        <header class="cabinet-header">
+          <div class="header-left">
+            <h1 class="cabinet-title">Личный кабинет мастера</h1>
+            <div class="cabinet-city" id="cabinetCity">
+              <i class="fas fa-map-marker-alt"></i>
+              <span id="currentCity">Город не выбран</span>
+            </div>
+          </div>
+          <nav class="cabinet-nav">
+            <a href="index.html" class="nav-link">
+              <i class="fas fa-home"></i> Главная
+            </a>
+            <a href="#" id="logoutBtn" class="nav-link logout">
+              <i class="fas fa-sign-out-alt"></i> Выйти
+            </a>
+          </nav>
+        </header>
+
+        <!-- Основной контент -->
+        <div class="cabinet-content">
+
+          <!-- Боковая панель -->
+          <aside class="sidebar">
+            <div class="user-card">
+              <div class="user-avatar" id="userAvatar">М</div>
+              <h2 class="user-name" id="userName">Мастер</h2>
+              <span class="user-role master" id="userRole">Мастер</span>
+            </div>
+
+            <!-- Блок с рейтингом -->
+            <div class="rating-display" id="ratingDisplay">
+              <div class="rating-value" id="sidebarRatingValue">0.0</div>
+              <div class="rating-stars" id="sidebarRatingStars">☆☆☆☆☆</div>
+              <div class="rating-count" id="sidebarRatingCount">0 отзывов</div>
+              <a href="#" class="reviews-link"
+                id="openReviewsModalBtn">отзывы</a>
+            </div>
+
+            <!-- В боковом меню sidebar-menu -->
+            <nav class="sidebar-menu">
+              <a href="#" class="menu-item active" data-tab="available-orders">
+                <i class="fas fa-briefcase"></i> Доступные заказы
+              </a>
+              <a href="#" class="menu-item" data-tab="my-orders">
+                <i class="fas fa-clipboard-check"></i> Мои заказы
+              </a>
+              <a href="#" class="menu-item" data-tab="messages">
+                <i class="fas fa-comments"></i> Сообщения
+                <span id="unreadMessagesBadge" class="unread-badge"
+                  style="display: none;">0</span>
+              </a>
+              <a href="#" class="menu-item" id="openProfileModalBtn">
+                <i class="fas fa-id-card"></i> Моя анкета
+              </a>
+            </nav>
+          </aside>
+
+          <!-- Основная область -->
+          <main class="main-content">
+
+            <!-- Приветствие -->
+            <div class="welcome-banner fade-in">
+              <div class="welcome-content">
+                <h2>Добро пожаловать, <span id="welcomeName">Мастер</span>!
+                  🎉</h2>
+                <p>Здесь вы можете находить новые заказы, управлять своими
+                  проектами и общаться с клиентами.</p>
+                <div class="stats-row">
+                  <div class="stat-card">
+                    <div class="stat-value" id="activeOrders">0</div>
+                    <div class="stat-label">Активные заказы</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-value" id="completedOrders">0</div>
+                    <div class="stat-label">Выполнено</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- БЛОК: Специализации мастера -->
+            <div class="specializations-section"
+              id="rightSpecializationsSection">
+              <h3><i class="fas fa-tools"></i> Мои специализации</h3>
+              <div class="specializations-grid-right"
+                id="rightSpecializationsGrid">
+                <!-- Список специализаций будет загружен через JS -->
+              </div>
+              <p class="specializations-note">
+                Заказы предлагаются в выбранных разделах. Вы можете изменить
+                список специализаций в <a href="#"
+                  onclick="document.getElementById('openProfileModalBtn').click(); return false;">анкете</a>.
+              </p>
+            </div>
+
+            <!-- Доступные заказы -->
+            <div class="tab-content active" id="availableOrdersTab">
+              <div class="section-title">
+                <h2><i class="fas fa-briefcase"></i> Доступные заказы</h2>
+              </div>
+              <div class="orders-list" id="availableOrdersList">
+                <div class="empty-state">
+                  <i class="fas fa-briefcase fa-3x"></i>
+                  <h3>Нет доступных заказов</h3>
+                  <p>Новые заказы появятся здесь</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Мои заказы -->
+            <div class="tab-content" id="myOrdersTab">
+              <div class="section-title">
+                <h2><i class="fas fa-clipboard-check"></i> Мои заказы</h2>
+                <div class="order-status-tabs">
+                  <button class="status-btn active"
+                    data-status="active">Активные</button>
+                  <button class="status-btn"
+                    data-status="completed">Выполненные</button>
+                  <button class="status-btn"
+                    data-status="cancelled">Отмененные</button>
+                </div>
+              </div>
+              <div class="orders-container" id="masterOrdersList">
+                <div class="empty-state">
+                  <i class="fas fa-clipboard-list fa-3x"></i>
+                  <h3>У вас пока нет заказов</h3>
+                  <p>Возьмите свой первый заказ из раздела
+                    "Доступные заказы"</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Вкладка сообщений -->
+            <div class="tab-content" id="messagesTab">
+              <div class="section-title">
+                <h2><i class="fas fa-comments"></i> Мои сообщения</h2>
+              </div>
+              <div id="chatContainer"></div>
+            </div>
+
+          </main>
+        </div>
+
+        <!-- Футер -->
+        <footer class="cabinet-footer">
+          <p>© 2024 РемонтЭксперт. Все права защищены.</p>
+          <p class="mt-1">Работайте с нами и развивайте свой бизнес</p>
+        </footer>
+
+      </div>
+    </div>
+
+    <!-- Модальное окно с отзывами для мастера -->
+    <div id="ratingModal" class="modal">
+      <div class="modal-content rating-modal-content">
+        <div class="rating-modal-header">
+          <h2>Мои отзывы</h2>
+          <button class="close-modal" onclick="hideRatingModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <!-- Скрытые элементы для рейтинга -->
+          <div style="display: none;">
+            <div class="rating-value" id="modalRatingValue">0</div>
+            <div class="rating-stars" id="modalRatingStars">☆☆☆☆☆</div>
+            <div class="rating-count" id="modalRatingCount">на основании 0
+              оценок</div>
+            <div class="reviews-section">
+              <h3>Опубликованные отзывы <span
+                  id="modalReviewsCount">0</span></h3>
+            </div>
+          </div>
+          <!-- Основной контейнер для списка отзывов -->
+          <div class="reviews-list" id="modalReviewsList">
+            <p class="no-reviews">Загрузка отзывов...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно деталей заказа -->
+    <div id="orderDetailsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Детали заказа</h2>
+          <button class="modal-close"
+            id="closeOrderDetailsModalBtn">&times;</button>
+        </div>
+        <div class="modal-body" id="orderDetailsContent">
+          <!-- Содержимое будет заполнено через JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно анкеты мастера -->
+    <div id="profileModal" class="profile-modal">
+      <div class="profile-modal-content">
+        <div class="profile-modal-header">
+          <h2><i class="fas fa-id-card"></i> Моя анкета мастера</h2>
+          <button class="profile-modal-close"
+            id="closeProfileModalBtn">&times;</button>
+        </div>
+        <div class="profile-modal-body">
+          <!-- Режим просмотра -->
+          <div id="profileViewMode" style="display: block;">
+            <!-- Фото профиля -->
+            <div class="profile-photo-section">
+              <div class="profile-photo-container">
+                <div class="profile-photo-preview" id="profilePhotoPreview">
+                  <i class="fas fa-user"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Карточка с именем и рейтингом -->
+            <div class="profile-name-card">
+              <div class="profile-name-avatar" id="profileAvatar">М</div>
+              <div class="profile-name-info">
+                <div class="profile-name-header">
+                  <h3 id="profileName">Мастер</h3>
+                  <a href="#" class="profile-edit-name-btn" id="profileEditBtn">
+                    <i class="fas fa-pencil-alt"></i> Редактировать
+                  </a>
+                </div>
+                <div class="profile-rating">
+                  <span class="profile-stars" id="profileStars">☆☆☆☆☆</span>
+                  <span class="profile-reviews-count" id="profileReviewsCount">0
+                    отзывов</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Информация о мастере -->
+            <div class="profile-view-section">
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i
+                    class="fas fa-user-edit"></i> О себе</span>
+                <span class="profile-info-value" id="viewAbout">
+                  <span class="profile-empty-field"><i
+                      class="fas fa-plus-circle"></i> Добавьте информацию о
+                    себе</span>
+                </span>
+              </div>
+
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i
+                    class="fas fa-graduation-cap"></i> Образование</span>
+                <span class="profile-info-value" id="viewEducation">
+                  <span class="profile-empty-field"><i
+                      class="fas fa-plus-circle"></i> Добавьте
+                    образование</span>
+                </span>
+              </div>
+
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="fas fa-trophy"></i>
+                  Достижения</span>
+                <span class="profile-info-value" id="viewAchievements">
+                  <span class="profile-empty-field"><i
+                      class="fas fa-plus-circle"></i> Добавьте достижения</span>
+                </span>
+              </div>
+
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="fas fa-star"></i>
+                  Сильные стороны</span>
+                <span class="profile-info-value" id="viewStrengths">
+                  <span class="profile-empty-field"><i
+                      class="fas fa-plus-circle"></i> Укажите ваши сильные
+                    стороны</span>
+                </span>
+              </div>
+
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="fas fa-tasks"></i>
+                  Предпочитаемые заказы</span>
+                <span class="profile-info-value" id="viewPreferredOrders">
+                  <span class="profile-empty-field"><i
+                      class="fas fa-plus-circle"></i> Укажите, какие заказы
+                    предпочитаете</span>
+                </span>
+              </div>
+
+              <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="profile-info-row"
+                  style="border-bottom: none; padding: 0;">
+                  <span class="profile-info-label"><i
+                      class="fas fa-briefcase"></i> Опыт</span>
+                  <span class="profile-info-value" id="viewExperience">0
+                    лет</span>
+                </div>
+                <div class="profile-info-row"
+                  style="border-bottom: none; padding: 0;">
+                  <span class="profile-info-label"><i class="fas fa-city"></i>
+                    Город</span>
+                  <span class="profile-info-value" id="viewCity">
+                    <span class="profile-empty-field">Не указан</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="fas fa-tools"></i>
+                  Специализации</span>
+                <span class="profile-info-value" id="viewSpecializations">
+                  <span class="profile-empty-field"><i
+                      class="fas fa-plus-circle"></i> Выберите
+                    специализации</span>
+                </span>
+              </div>
+
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i class="fas fa-clock"></i>
+                  Доступность</span>
+                <span class="profile-info-value" id="viewAvailability">
+                  <span class="profile-empty-field"><i
+                      class="fas fa-plus-circle"></i> Укажите время
+                    доступности</span>
+                </span>
+              </div>
+
+              <div class="profile-info-row">
+                <span class="profile-info-label"><i
+                    class="fas fa-map-marker-alt"></i> Районы выезда</span>
+                <span class="profile-info-value" id="viewDistricts">
+                  <span class="profile-empty-field"><i
+                      class="fas fa-plus-circle"></i> Укажите районы
+                    выезда</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Режим редактирования -->
+          <div id="profileEditMode" style="display: none;">
+            <form id="profileForm">
+              <div class="profile-photo-section">
+                <div class="profile-photo-container">
+                  <div class="profile-photo-preview"
+                    id="profilePhotoPreviewEdit">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div class="profile-photo-upload"
+                    onclick="document.getElementById('profilePhotoInputGlobal').click()">
+                    <i class="fas fa-camera"></i>
+                  </div>
+                </div>
+                <span class="profile-photo-hint">
+                  <i class="fas fa-info-circle"></i> Нажмите на камеру, чтобы
+                  загрузить фото
+                </span>
+              </div>
+
+              <div class="profile-form-group">
+                <label><i class="fas fa-user"></i> Ваше имя</label>
+                <input type="text" class="profile-input" id="editName"
+                  placeholder="Как вас зовут">
+              </div>
+
+              <div class="profile-form-group">
+                <label><i class="fas fa-user-edit"></i> О себе</label>
+                <textarea class="profile-textarea" id="editAbout"
+                  placeholder="Расскажите о себе..." rows="4"></textarea>
+              </div>
+
+              <div class="profile-grid-2">
+                <div class="profile-form-group">
+                  <label><i class="fas fa-graduation-cap"></i>
+                    Образование</label>
+                  <input type="text" class="profile-input" id="editEducation"
+                    placeholder="Например: МГСУ">
+                </div>
+                <div class="profile-form-group">
+                  <label><i class="fas fa-trophy"></i> Достижения</label>
+                  <input type="text" class="profile-input" id="editAchievements"
+                    placeholder="Сертификаты, награды">
+                </div>
+              </div>
+
+              <div class="profile-grid-2">
+                <div class="profile-form-group">
+                  <label><i class="fas fa-star"></i> Сильные стороны</label>
+                  <input type="text" class="profile-input" id="editStrengths"
+                    placeholder="Аккуратность, пунктуальность">
+                </div>
+                <div class="profile-form-group">
+                  <label><i class="fas fa-tasks"></i> Предпочитаемые
+                    заказы</label>
+                  <input type="text" class="profile-input"
+                    id="editPreferredOrders" placeholder="Капитальный ремонт">
+                </div>
+              </div>
+
+              <div class="profile-grid-2">
+                <div class="profile-form-group">
+                  <label><i class="fas fa-briefcase"></i> Опыт (лет)</label>
+                  <input type="number" class="profile-input" id="editExperience"
+                    min="0" max="50" value="0">
+                </div>
+                <div class="profile-form-group">
+                  <label><i class="fas fa-city"></i> Город</label>
+                  <input type="text" class="profile-input" id="editCity"
+                    placeholder="Москва">
+                </div>
+              </div>
+
+              <div class="profile-form-group">
+                <label><i class="fas fa-tools"></i> Специализации</label>
+                <div class="specializations-edit-container">
+                  <div class="settings-grid" id="editSpecializationsGrid"></div>
+                </div>
+              </div>
+
+              <div class="profile-form-group">
+                <label><i class="fas fa-calendar-alt"></i> Рабочие дни</label>
+                <div class="days-grid">
+                  <div class="day-checkbox">
+                    <input type="checkbox" name="workDays" value="monday"
+                      id="day_mon">
+                    <label for="day_mon">Понедельник</label>
+                  </div>
+                  <div class="day-checkbox">
+                    <input type="checkbox" name="workDays" value="tuesday"
+                      id="day_tue">
+                    <label for="day_tue">Вторник</label>
+                  </div>
+                  <div class="day-checkbox">
+                    <input type="checkbox" name="workDays" value="wednesday"
+                      id="day_wed">
+                    <label for="day_wed">Среда</label>
+                  </div>
+                  <div class="day-checkbox">
+                    <input type="checkbox" name="workDays" value="thursday"
+                      id="day_thu">
+                    <label for="day_thu">Четверг</label>
+                  </div>
+                  <div class="day-checkbox">
+                    <input type="checkbox" name="workDays" value="friday"
+                      id="day_fri">
+                    <label for="day_fri">Пятница</label>
+                  </div>
+                  <div class="day-checkbox">
+                    <input type="checkbox" name="workDays" value="saturday"
+                      id="day_sat">
+                    <label for="day_sat">Суббота</label>
+                  </div>
+                  <div class="day-checkbox">
+                    <input type="checkbox" name="workDays" value="sunday"
+                      id="day_sun">
+                    <label for="day_sun">Воскресенье</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-form-group">
+                <label><i class="fas fa-clock"></i> Время работы</label>
+                <div class="time-range-group">
+                  <div class="time-input-group">
+                    <i class="fas fa-play"></i>
+                    <input type="time" id="workStartTime" value="09:00">
+                  </div>
+                  <span>—</span>
+                  <div class="time-input-group">
+                    <i class="fas fa-stop"></i>
+                    <input type="time" id="workEndTime" value="18:00">
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-form-group">
+                <label><i class="fas fa-map-marker-alt"></i> Районы
+                  выезда</label>
+                <textarea class="profile-textarea" id="editDistricts"
+                  placeholder="Центральный, Автозаводский..."
+                  rows="3"></textarea>
+              </div>
+
+              <div class="profile-form-actions">
+                <button type="submit" class="btn-profile-save">
+                  <i class="fas fa-check-circle"></i> Сохранить анкету
+                </button>
+                <button type="button" class="btn-profile-cancel"
+                  id="cancelProfileBtn">
+                  <i class="fas fa-times"></i> Отмена
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Скрытый input для загрузки фото -->
+    <input type="file" id="profilePhotoInputGlobal" accept="image/*"
+      style="display: none;">
+
+    <!-- Модальное окно завершения заказа с отзывом -->
+    <div id="completeOrderModal" class="modal">
+      <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+          <h2>Завершение заказа</h2>
+          <span class="close"
+            onclick="MasterOrders.hideCompleteOrderModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <div id="completeOrderInitial">
+            <p>Желаете оставить отзыв о заказчике?</p>
+            <div class="form-actions">
+              <button class="btn btn-primary"
+                onclick="MasterOrders.showReviewForm()">Да, оставить
+                отзыв</button>
+              <button class="btn btn-secondary"
+                onclick="MasterOrders.completeOrderWithoutReview()">Нет, просто
+                завершить</button>
+            </div>
+          </div>
+          <div id="completeOrderReviewForm" style="display: none;">
+            <form id="reviewForm">
+              <div class="form-group">
+                <label>Оценка</label>
+                <div class="rating-stars">
+                  <input type="radio" name="reviewRating" value="5"
+                    id="star5"><label for="star5">★</label>
+                  <input type="radio" name="reviewRating" value="4"
+                    id="star4"><label for="star4">★</label>
+                  <input type="radio" name="reviewRating" value="3"
+                    id="star3"><label for="star3">★</label>
+                  <input type="radio" name="reviewRating" value="2"
+                    id="star2"><label for="star2">★</label>
+                  <input type="radio" name="reviewRating" value="1"
+                    id="star1"><label for="star1">★</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="reviewComment">Комментарий (необязательно)</label>
+                <textarea id="reviewComment" rows="3" class="form-control"
+                  placeholder="Ваш отзыв о заказчике..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Фото (необязательно)</label>
+                <input type="file" id="reviewPhotos" multiple accept="image/*"
+                  class="form-control">
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary"
+                  onclick="MasterOrders.submitReviewAndComplete()">Отправить и
+                  завершить</button>
+                <button type="button" class="btn btn-secondary"
+                  onclick="MasterOrders.hideCompleteOrderModal()">Отмена</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Скрипты в правильном порядке -->
+    <!-- Скрипты в правильном порядке -->
+    <!-- Скрипты в правильном порядке (с версиями для обновления кэша) -->
+    <script src="data/russian-cities.js?v=3"></script>
+<script src="data/standard-cities.js"></script>
+    <script src="js/city-autocomplete.js?v=3"></script>
+    <script src="js/city-manager.js?v=3"></script>
+    <script src="js/api.js?v=3"></script>
+<script src="js/phone-mask.js"></script>
+    <script src="js/utils.js?v=3"></script>
+    <script src="js/chat-api.js?v=3"></script>
+    <script src="js/chat-ui.js?v=3"></script>
+    <script src="js/master-profile.js?v=3"></script>
+    <script src="js/master-orders.js?v=3"></script>
+    <script src="js/master-cabinet-integrated.js?v=4"></script>
+    <script src="js/register.js?v=3"></script>
+  </body>
+</html>

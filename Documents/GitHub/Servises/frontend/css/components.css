@@ -1,0 +1,2177 @@
+/* css/components.css - Общие компоненты */
+
+/* ========== КНОПКИ ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Цветовые варианты кнопок */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark), #1e40af);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+  color: var(--white);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, var(--secondary-dark), #047857);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--danger), #dc2626);
+  color: var(--white);
+}
+
+.btn-outline {
+  background: var(--lighter);
+  color: var(--gray-dark);
+  border: 2px solid var(--gray-light);
+}
+
+.btn-outline:hover {
+  background: var(--light);
+  border-color: var(--gray);
+}
+
+/* Размеры кнопок */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.btn-lg {
+  padding: 20px 32px;
+  font-size: 18px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ========== ФОРМЫ ========== */
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 10px;
+}
+
+.form-label.required::after {
+  content: '*';
+  color: var(--danger);
+  margin-left: 4px;
+}
+
+.form-control, .form-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid var(--light);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  color: var(--dark);
+  transition: var(--transition);
+  background: var(--lighter);
+}
+
+.form-control:focus, .form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.form-control.error, .form-input.error {
+  border-color: var(--danger);
+  background: #fef2f2;
+}
+
+.form-control::placeholder, .form-input::placeholder {
+  color: #94a3b8;
+}
+
+/* Чекбоксы и радиокнопки */
+.checkbox-group,
+.radio-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.checkbox-group input[type="checkbox"],
+.radio-group input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.checkbox-group label,
+.radio-group label {
+  font-weight: 500;
+  color: var(--gray-dark);
+  cursor: pointer;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.checkbox-group label a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.checkbox-group label a:hover {
+  text-decoration: underline;
+}
+
+/* ========== КАРТОЧКИ ========== */
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--light);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.card-header {
+  padding: 25px 25px 0;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+.card-footer {
+  padding: 0 25px 25px;
+}
+
+/* ========== БЕЙДЖИ ========== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-xl);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+}
+
+.badge-secondary {
+  background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+  color: var(--white);
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, var(--danger), #dc2626);
+  color: var(--white);
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, var(--warning), #d97706);
+  color: var(--white);
+}
+
+/* ========== СООБЩЕНИЯ ========== */
+.alert, .form-status {
+  padding: 20px 25px;
+  border-radius: var(--radius-md);
+  margin: 20px 0;
+  font-size: 16px;
+  line-height: 1.6;
+  animation: slideDown 0.5s ease-out;
+}
+
+.alert-success, .form-status.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 2px solid #a7f3d0;
+}
+
+.alert-error, .form-status.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #fca5a5;
+}
+
+.alert-warning {
+  background: #fef3c7;
+  color: #92400e;
+  border: 2px solid #fcd34d;
+}
+
+.alert-info {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 2px solid #93c5fd;
+}
+
+/* Сообщения об ошибках */
+.error-message {
+  font-size: 14px;
+  color: var(--danger);
+  margin-top: 8px;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
+
+/* Прогресс-бар */
+.form-progress {
+  margin-bottom: 30px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: #64748b;
+  text-align: right;
+  font-weight: 600;
+}
+
+/* Анимации для форм */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-8px);
+  }
+
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+
+/* Добавьте в конец components.css */
+.phone-visible {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.phone-hidden {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background-color: #fff3e0;
+  color: #f57c00;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.order-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* Стили для поля телефона в разных состояниях */
+.phone-input-visible {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #4CAF50 !important;
+  opacity: 1 !important;
+}
+
+.phone-input-hidden {
+  background-color: #f5f5f5 !important;
+  color: #888888 !important;
+  border-color: #cccccc !important;
+  opacity: 0.7 !important;
+}
+
+.phone-label-visible {
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+
+.phone-label-hidden {
+  color: #888888 !important;
+  opacity: 0.7 !important;
+}
+
+.phone-help-visible {
+  color: #666666 !important;
+  opacity: 1 !important;
+}
+
+.phone-help-hidden {
+  color: #aaaaaa !important;
+  opacity: 0.7 !important;
+}
+
+/* Стили для рейтинга и отзывов */
+.rating-display {
+  text-align: center;
+  padding: 10px;
+  background: linear-gradient(135deg, #fff8e1, #fff3e0);
+  border-radius: 8px;
+  border: 2px solid #ffd54f;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.rating-display:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 213, 79, 0.3);
+}
+
+.rating-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ff9800;
+  margin-bottom: 5px;
+}
+
+.rating-stars {
+  font-size: 18px;
+  color: #ffc107;
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+}
+
+.rating-count {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.reviews-link {
+  color: #2196f3;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.reviews-link:hover {
+  text-decoration: underline;
+}
+
+/* Стили для страницы отзывов */
+.reviews-container {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rating-summary {
+  text-align: center;
+  padding: 30px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  border: 2px solid #e9ecef;
+}
+
+.rating-summary .rating-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: #ff9800;
+  margin-bottom: 10px;
+}
+
+.rating-summary .rating-stars {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.rating-summary .rating-count {
+  font-size: 16px;
+  color: #666;
+}
+
+.stars-distribution {
+  max-width: 300px;
+  margin: 20px auto;
+}
+
+.star-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.star-label {
+  width: 100px;
+  font-size: 14px;
+  color: #666;
+}
+
+.star-bar {
+  flex-grow: 1;
+  height: 10px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  margin: 0 15px;
+  overflow: hidden;
+}
+
+.star-fill {
+  height: 100%;
+  background: #ffc107;
+  transition: width 0.5s ease;
+}
+
+.star-count {
+  width: 40px;
+  font-size: 14px;
+  color: #666;
+  text-align: right;
+}
+
+.reviews-section {
+  margin-top: 30px;
+}
+
+.reviews-section h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.reviews-section p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.reviews-list {
+  margin-top: 20px;
+}
+
+.review-card {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+
+.review-card:hover {
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.review-card:last-child {
+  border-bottom: none;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reviewer-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.review-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.review-rating {
+  color: #ffc107;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.review-category {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.review-text {
+  line-height: 1.6;
+  color: #333;
+  margin-top: 10px;
+}
+
+/* Адаптивность для рейтинга в боковой панели */
+@media (max-width: 768px) {
+  .rating-display {
+    padding: 8px;
+  }
+
+  .rating-value {
+    font-size: 22px;
+  }
+
+  .rating-stars {
+    font-size: 14px;
+  }
+
+  .reviews-link {
+    font-size: 12px;
+  }
+}
+
+/* Стили для статусов заказов */
+.status-new {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.status-in-progress {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.status-completed {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.status-cancelled {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.order-header h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  flex-grow: 1;
+}
+
+.order-body {
+  color: #666;
+  line-height: 1.6;
+}
+
+.order-body p {
+  margin: 8px 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-state i {
+  margin-bottom: 20px;
+  color: #ddd;
+}
+
+.empty-state h3 {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #999;
+}
+
+/* Стили для модальных окон */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background-color: white;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.close-modal:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modal-body {
+  padding: 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary {
+  background: #f8f9fa;
+  color: #666;
+  border: 2px solid #dee2e6;
+}
+
+.btn-secondary:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+/* Стили для чата */
+.chat-container {
+  display: flex;
+  height: 600px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
+.chat-sidebar {
+  width: 320px;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.chat-item:hover {
+  background-color: #f5f5f5;
+}
+
+.chat-item.active {
+  background-color: #e3f2fd;
+  border-left: 3px solid #2196f3;
+}
+
+.chat-item.unread {
+  background-color: #f0f8ff;
+}
+
+.chat-item-avatar {
+  margin-right: 12px;
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+}
+
+.avatar-circle.master {
+  background-color: #4f46e5;
+}
+
+.avatar-circle.client {
+  background-color: #10b981;
+}
+
+.chat-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.chat-item-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-item-time {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.chat-item-preview {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.chat-item-order {
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-item-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff3b30;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  padding: 40px;
+}
+
+.chat-empty-state i {
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.chat-empty-state h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+}
+
+.chat-participant-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-participant-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.chat-order-title {
+  font-size: 13px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.message {
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+
+.message.outgoing {
+  align-self: flex-end;
+}
+
+.message.incoming {
+  align-self: flex-start;
+}
+
+.message-content {
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.message.outgoing .message-content {
+  background-color: #4f46e5;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message.incoming .message-content {
+  background-color: #f0f0f0;
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+  align-self: flex-end;
+}
+
+.message.incoming .message-time {
+  align-self: flex-start;
+}
+
+.message-attachment {
+  margin-top: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.chat-image {
+  max-width: 300px;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.attachment-info {
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  font-size: 12px;
+  color: #666;
+}
+
+.message-attachment.file {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border: 1px solid #ddd;
+}
+
+.message-attachment.file i {
+  font-size: 24px;
+  margin-right: 12px;
+  color: #4f46e5;
+}
+
+.file-name {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #666;
+}
+
+.chat-input-area {
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+  background: white;
+}
+
+.chat-input-container {
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  padding: 8px;
+  background: #f8f9fa;
+}
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-attach-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.chat-attach-btn:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.chat-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: transparent;
+}
+
+.chat-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.chat-send-btn:hover {
+  background: #4338ca;
+}
+
+.chat-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 0 8px;
+}
+
+.attachment-preview {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.attachment-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-attachment {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-chats {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.empty-chats i {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.empty-chats h4 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Бейдж непрочитанных в меню */
+.unread-badge {
+  display: inline-block;
+  background: #ff3b30;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  padding: 0 5px;
+  margin-left: 8px;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Кнопка чата в карточке заказа */
+.btn-chat-order {
+  padding: 8px 16px;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.btn-chat-order:hover {
+  background: #1976d2;
+}
+
+/* Адаптивность чата */
+@media (max-width: 768px) {
+  .chat-container {
+    flex-direction: column;
+    height: 500px;
+  }
+
+  .chat-sidebar {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .chat-main {
+    flex: 1;
+  }
+
+  .message {
+    max-width: 85%;
+  }
+}
+
+/* Стили для чата */
+.chat-container {
+  display: flex;
+  height: 600px;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+
+.chat-sidebar {
+  width: 300px;
+  border-right: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+
+.chat-item:hover {
+  background: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+.chat-item.active {
+  background: #e3f2fd;
+  border-color: #2196f3;
+}
+
+.chat-item.unread {
+  background: #fff8e1;
+  border-color: #ffd54f;
+}
+
+.chat-item-avatar {
+  margin-right: 12px;
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+}
+
+.avatar-circle.master {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+}
+
+.avatar-circle.client {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+.chat-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.chat-item-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-item-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.chat-item-preview {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.chat-item-order {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+
+.chat-item-badge {
+  background: #ff4757;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  padding: 40px;
+}
+
+.chat-empty-state i {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #ddd;
+}
+
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-header {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.chat-participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chat-participant-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.chat-order-title {
+  font-size: 14px;
+  color: #666;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.message {
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.message.outgoing {
+  align-self: flex-end;
+}
+
+.message.incoming {
+  align-self: flex-start;
+}
+
+.message-content {
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.message.outgoing .message-content {
+  background: #4f46e5;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message.incoming .message-content {
+  background: #f0f0f0;
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+  padding: 0 4px;
+}
+
+.message-attachment {
+  margin-top: 8px;
+}
+
+.chat-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  display: block;
+}
+
+.attachment-info {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.chat-input-area {
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.chat-input-container {
+  background: white;
+  border-radius: 24px;
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-attach-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.chat-attach-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.chat-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.chat-send-btn {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-send-btn:hover {
+  background: #4338ca;
+}
+
+.empty-chats {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.empty-chats i {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #ddd;
+}
+
+/* Бейдж непрочитанных в меню */
+.unread-badge {
+  background: #ff4757;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  margin-left: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Уведомление о чате */
+.chat-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 10px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 4px solid #4299e1;
+  animation: slideInRight 0.3s ease-out;
+  max-width: 350px;
+}
+
+.chat-notification i {
+  font-size: 24px;
+  color: #4299e1;
+}
+
+.chat-notification-content {
+  flex: 1;
+}
+
+.chat-notification-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #2d3748;
+}
+
+.chat-notification-message {
+  font-size: 14px;
+  color: #718096;
+  margin-bottom: 8px;
+}
+
+.chat-notification-close {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.chat-notification-close:hover {
+  background: #f7fafc;
+  color: #718096;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Добавьте этот CSS в ваши файлы стилей (например, в components.css) */
+
+.phone-wrapper {
+  display: flex;
+  align-items: center;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fafbfc;
+  transition: border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.phone-wrapper:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.phone-prefix {
+  font-weight: 700;
+  padding: 10px 16px;
+  background: #f3f4f6;
+  border-right: 2px solid #e2e8f0;
+  color: #1e293b;
+  font-size: 16px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.phone-input {
+  border: none !important;
+  border-radius: 0 !important;
+  flex: 1;
+  background: transparent !important;
+  padding: 10px 16px;
+}
+
+.phone-input:focus {
+  outline: none;
+  box-shadow: none !important;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+  .phone-prefix {
+    padding: 10px 12px;
+  }
+
+  .phone-input {
+    padding: 10px 12px;
+  }
+}
+
+/* Стили для модального окна политики конфиденциальности */
+
+.privacy-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  animation: privacyFadeIn 0.3s ease;
+}
+
+@keyframes privacyFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.privacy-modal-content {
+  background-color: white;
+  margin: 3% auto;
+  padding: 0;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: privacySlideIn 0.3s ease;
+}
+
+@keyframes privacySlideIn {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.privacy-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.privacy-modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.privacy-modal-header h2 i {
+  font-size: 28px;
+}
+
+.privacy-modal-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.privacy-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.privacy-modal-body {
+  padding: 30px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.privacy-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.privacy-tab {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.privacy-tab:hover {
+  color: #4f46e5;
+  background: #f1f5f9;
+}
+
+.privacy-tab.active {
+  color: #4f46e5;
+}
+
+.privacy-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 3px 3px 0 0;
+}
+
+.privacy-content {
+  display: none;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.privacy-content.active {
+  display: block;
+  animation: privacyContentFade 0.3s ease;
+}
+
+@keyframes privacyContentFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.privacy-content h3 {
+  color: #1e293b;
+  font-size: 18px;
+  margin: 20px 0 10px;
+}
+
+.privacy-content h3:first-child {
+  margin-top: 0;
+}
+
+.privacy-content p {
+  margin: 10px 0;
+  font-size: 15px;
+}
+
+.privacy-content ul {
+  margin: 10px 0;
+  padding-left: 25px;
+}
+
+.privacy-content li {
+  margin: 5px 0;
+}
+
+.privacy-content a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.privacy-content a:hover {
+  text-decoration: underline;
+}
+
+.privacy-date {
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid #e2e8f0;
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 14px;
+  text-align: right;
+}
+
+.privacy-modal-footer {
+  padding: 20px 30px;
+  border-top: 1px solid #e2e8f0;
+  text-align: right;
+  background: #f8fafc;
+}
+
+.btn-privacy-close {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-privacy-close:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .privacy-modal-content {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .privacy-modal-body {
+    max-height: calc(100vh - 180px);
+  }
+
+  .privacy-tabs {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .privacy-tab {
+    width: 100%;
+    text-align: left;
+  }
+
+  .privacy-tab.active::after {
+    display: none;
+  }
+
+  .privacy-tab.active {
+    background: #f1f5f9;
+  }
+}
+
+.category-group {
+  margin-bottom: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.category-group-header {
+  padding: 12px 16px;
+  background-color: #e8ebec;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 900;
+  transition: background-color 0.2s;
+}
+
+.category-group-header:hover {
+  background-color: #edf2f7;
+}
+
+.category-group-header i {
+  transition: transform 0.3s;
+}
+
+.category-group-header.open i {
+  transform: rotate(90deg);
+}
+
+.category-group-content {
+  display: none;
+  padding: 16px;
+  background-color: white;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.category-group-content.open {
+  display: grid;
+}
+
+/* Кнопка "Контакты" */
+.contacts-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 10px;
+  /* отступ от заголовка */
+}
+
+.contacts-button {
+  width: 130px;
+  height: 62px;
+  border: none;
+  padding: 0;
+  background-image: url('../img/add-empty.jpg');
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  justify-content: center;
+}
+
+.contacts-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.contacts-button span {
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px 6px 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(2px);
+}
+
+/* Выпадающий блок с контактами */
+.contacts-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 240px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.contacts-popup.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.contacts-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.contact-item i {
+  width: 20px;
+  color: #007bff;
+  font-size: 16px;
+}
+
+.contact-item a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-item a:hover {
+  color: #007bff;
+}
+
+/* Маленькая стрелочка сверху popup */
+.contacts-popup::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 20px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent white transparent;
+}
+
+/* Увеличение глазков в 2 раза */
+.toggle-password {
+  font-size: 32px !important;
+  width: 48px !important;
+  height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Увеличение аватара человечка в 2 раза */
+.user-avatar {
+  font-size: 72px !important;
+}
+
+/* Аватар в боковой панели */
+.user-avatar {
+  width: 120px !important;
+  height: 120px !important;
+  font-size: 56px !important;
+}

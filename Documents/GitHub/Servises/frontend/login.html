@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Вход в систему</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/redirect.js"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1>👋 Вход в систему</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Телефон</label>
+                    <input type="tel" id="phone" class="phone-mask" placeholder="+7 (___) ___-__-__" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Пароль</label>
+                    <input type="password" id="password" placeholder="Введите пароль" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </button>
+            </form>
+            <div class="auth-footer">
+                <a href="register.html"><i class="fas fa-user-plus"></i> Регистрация</a>
+                <a href="reset-password.html"><i class="fas fa-key"></i> Забыли пароль?</a>
+            </div>
+        </div>
+    </div>
+    <script src="js/api.js"></script>
+    <script src="js/phone-mask.js"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            
+            const phoneInput = document.getElementById("phone");
+            const password = document.getElementById("password").value;
+            
+            // Получаем чистый телефон
+            let phone = phoneInput.value;
+            
+            // Если есть data-clean-phone - берем его
+            if (phoneInput.dataset.cleanPhone) {
+                phone = phoneInput.dataset.cleanPhone;
+            } else {
+                // Иначе очищаем от всех нецифровых символов
+                const digits = phone.replace(/\D/g, "");
+                if (digits.length > 0) {
+                    phone = "+7" + digits.slice(1);
+                } else {
+                    phone = "+7";
+                }
+            }
+            
+            console.log("📞 Отправка телефона:", phone);
+            console.log("🔑 Пароль:", password);
+            
+            try {
+                const response = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phone, password })
+                });
+                
+                console.log("📊 Статус ответа:", response.status);
+                
+                const data = await response.json();
+                console.log("📊 Ответ сервера:", data);
+                
+                if (data.success) {
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("remont_token", data.token);
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    localStorage.setItem("remont_user", JSON.stringify(data.user));
+                    
+                    window.location.href = data.user.role === "master" ? "master-cabinet.html" : "client-cabinet.html";
+                } else {
+                    alert("❌ " + data.message);
+                }
+            } catch(error) {
+                console.error("❌ Ошибка входа:", error);
+                alert("❌ Ошибка: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

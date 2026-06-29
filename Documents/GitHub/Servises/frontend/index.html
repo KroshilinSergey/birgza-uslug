@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Биржа услуг | Найди мастера или получи заказ</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/home-enhanced.css">
+    <link rel="icon" href="img/logo.png">
+     <script src="js/redirect.js"></script>
+  </head>
+  <body>
+    <div class="hero">
+      <!-- Кнопка-контакты -->
+      <div class="contacts-wrapper">
+        <button class="contacts-button" id="contactsButton"
+          aria-label="Контакты">
+          <span>Контакты</span>
+        </button>
+        <div class="contacts-popup" id="contactsPopup">
+          <div class="contacts-popup-content">
+            <div class="contact-item">
+              <i class="fas fa-phone-alt"></i>
+              <a href="tel:+79001772718">8 (900) 177-27-18</a>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <a href="mailto:rabota350882@gmail.com">rabota350882@gmail.com</a>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-clock"></i>
+              <span>Работаем: 9:00 – 21:00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h1>Биржа услуг</h1>
+
+      <!-- Блок с городом (под заголовком) -->
+      <div class="city-container">
+        <div class="current-city" id="currentCity">
+          <i class="fas fa-map-marker-alt"></i>
+          <span id="cityName">Выберите город</span>
+        </div>
+        <button class="btn-city-change" onclick="showCityModal()">
+          <i class="fas fa-exchange-alt"></i> Сменить
+        </button>
+      </div>
+
+      <p class="subtitle">Платформа для заказчиков и мастеров. Быстро, надежно,
+        выгодно.</p>
+
+      <div class="benefits-block glowing-text">
+        <div class="benefits-header">
+          <span class="benefits-title">Пройдите простую регистрацию</span>
+          <span class="benefits-highlight">и вам станут <span
+              class="free-word">БЕСПЛАТНО</span></span>
+          <span class="benefits-subtitle">доступны следующие услуги:</span>
+        </div>
+        <div class="benefit-row">
+          <i class="fas fa-user-tie"></i>
+          <span><strong>Заказчикам:</strong> Опубликуйте заказ — мастера сами
+            предложат лучшие цены. Вам останется только выбрать!</span>
+        </div>
+        <div class="benefit-row">
+          <i class="fas fa-tools"></i>
+          <span><strong>Мастерам:</strong> Укажите специализации и получайте
+            только релевантные заказы. Никакого спама, только ваши
+            клиенты!</span>
+        </div>
+      </div>
+
+      <!-- Контейнер для кнопок -->
+      <div class="auth-buttons" id="authButtons"></div>
+
+      <!-- Модальное окно выбора города -->
+      <div id="cityModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Выбор города</h3>
+            <button class="modal-close" onclick="hideCityModal()">×</button>
+          </div>
+          <div class="modal-body">
+            <p>Выберите город для поиска мастеров и заказов:</p>
+            <div class="form-group">
+              <input type="text" id="modalCitySearch" class="form-control"
+                placeholder="Начните вводить название города...">
+            </div>
+            <div id="citySearchResults" class="city-results"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline"
+              onclick="hideCityModal()">Отмена</button>
+            <button type="button" class="btn btn-primary"
+              onclick="saveSelectedCity()">Сохранить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- СКРИПТЫ: сначала city-manager, потом home -->
+    <script src="js/utils.js"></script>
+    <script src="js/city-manager.js"></script>
+    <script src="js/home.js"></script>
+  </body>
+</html>

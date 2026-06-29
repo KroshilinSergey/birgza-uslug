@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; margin:0; }
+        .box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
+        h2 { text-align:center; color:#667eea; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing:border-box; }
+        button { width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size:16px; }
+        button:hover { background: #5a67d8; }
+        .error { color: red; margin-top: 10px; text-align: center; }
+        .hint { color: #666; font-size: 12px; text-align:center; margin-top:15px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>👑 Админ-панель</h2>
+        <input type="text" id="phone" placeholder="Телефон" value="+79001772718">
+        <input type="password" id="password" placeholder="Пароль" value="Oukitelk6000pro">
+        <button onclick="login()">Войти</button>
+        <div id="error" class="error"></div>
+        <div class="hint">Телефон: +79001772718 | Пароль: Oukitelk6000pro</div>
+    </div>
+    <script>
+        async function login() {
+            const phone = document.getElementById("phone").value;
+            const password = document.getElementById("password").value;
+            document.getElementById("error").innerHTML = '';
+            
+            try {
+                const res = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phone, password })
+                });
+                const data = await res.json();
+                
+                if (data.success && data.user.role === "admin") {
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("remont_token", data.token);
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    localStorage.setItem("remont_user", JSON.stringify(data.user));
+                    window.location.href = "admin-panel.html";
+                } else {
+                    document.getElementById("error").innerHTML = "❌ Доступ запрещен";
+                }
+            } catch(e) {
+                document.getElementById("error").innerHTML = "❌ Ошибка: " + e.message;
+            }
+        }
+    </script>
+</body>
+</html>
